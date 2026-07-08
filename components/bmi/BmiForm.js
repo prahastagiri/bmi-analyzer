@@ -56,8 +56,8 @@ export function BmiForm({
       <CardHeader>
         <CardTitle>Input data tubuh</CardTitle>
         <CardDescription>
-          User tidak wajib login untuk menghitung BMI. Login hanya diperlukan
-          saat ingin menyimpan atau export hasil.
+          Kamu bisa langsung menghitung tanpa login. Login hanya diperlukan
+          saat ingin menyimpan atau mengekspor hasil.
         </CardDescription>
       </CardHeader>
       <CardContent>

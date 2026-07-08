@@ -213,9 +213,9 @@ export function useBmiAnalyzer() {
 
       setStatus("Hasil berhasil disimpan.");
     } catch (saveError) {
+      console.error("Gagal menyimpan hasil BMI:", saveError);
       setError(
-        saveError.message ||
-          "Hasil gagal disimpan. Pastikan tabel bmi_histories sudah dibuat."
+        "Hasil gagal disimpan. Coba lagi beberapa saat lagi — jika masih gagal, muat ulang halaman."
       );
       setStatus("");
     }

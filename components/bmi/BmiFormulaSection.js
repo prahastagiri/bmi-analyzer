@@ -122,8 +122,8 @@ export function BmiFormulaSection({ result }) {
             Rumus dan hitungannya
           </h3>
           <p className="mt-1 text-sm leading-6 text-slate-600">
-            Setiap bagian di bawah memakai angka dari inputmu, jadi pengguna bisa
-            melihat asal hasil BMI dan nutrisi yang muncul.
+            Setiap bagian di bawah memakai angka dari inputmu, jadi kamu bisa
+            melihat dari mana hasil BMI dan nutrisimu berasal.
           </p>
         </div>
         <Badge variant="default">{formulaItems.length} rumus</Badge>

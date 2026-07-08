@@ -139,7 +139,7 @@ function RegisterPageInner() {
         <CardHeader>
           <CardTitle>Buat akun baru</CardTitle>
           <CardDescription>
-            Akun dipakai untuk menyimpan history dan membuka fitur export hasil.
+            Akun dipakai untuk menyimpan riwayat dan membuka fitur export hasil.
           </CardDescription>
         </CardHeader>
         <CardContent>

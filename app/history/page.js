@@ -72,9 +72,9 @@ export default function HistoryPage() {
         setSelectedId((current) => current || data?.[0]?.id || "");
         setStatus("");
       } catch (loadError) {
+        console.error("Gagal memuat riwayat BMI:", loadError);
         setError(
-          loadError.message ||
-            "Riwayat tidak bisa dimuat. Pastikan tabel bmi_histories sudah ada."
+          "Riwayat tidak bisa dimuat. Periksa koneksimu lalu muat ulang halaman."
         );
         setStatus("");
       }

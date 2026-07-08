@@ -15,7 +15,8 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "BMI Analyzer",
-  description: "Aplikasi BMI Analyzer dengan auth, history, dan export hasil.",
+  description:
+    "Hitung BMI, berat badan ideal, dan kebutuhan kalori, protein, lemak, serta karbohidrat harianmu. Gratis tanpa login, lengkap dengan riwayat dan export hasil.",
 };
 
 /**

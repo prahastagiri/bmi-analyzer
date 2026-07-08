@@ -1,4 +1,4 @@
-import { ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, History, ShieldCheck, Sigma, Sparkles } from "lucide-react";
 import { Suspense } from "react";
 
 import { BmiAnalyzer } from "@/components/bmi-analyzer";
@@ -20,7 +20,7 @@ export default function Home() {
       <section className="grid gap-6 rounded-[32px] bg-slate-950 px-6 py-8 text-white shadow-2xl shadow-slate-900/10 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
         <div className="space-y-5">
           <Badge className="bg-white/10 text-sky-100 hover:bg-white/10">
-            Portfolio-ready BMI analyzer
+            Gratis, langsung pakai tanpa login
           </Badge>
           <div className="space-y-4">
             <h1 className="max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">
@@ -28,10 +28,10 @@ export default function Home() {
               aplikasi.
             </h1>
             <p className="max-w-2xl text-base leading-7 text-slate-300 sm:text-lg">
-              Aplikasi ini membantu pengguna menghitung BMI, berat badan ideal,
-              kalori, protein, lemak, dan karbohidrat harian. User boleh
-              langsung menghitung tanpa login, lalu masuk hanya saat ingin
-              menyimpan atau export hasil.
+              Ketahui BMI, berat badan ideal, serta kebutuhan kalori, protein,
+              lemak, dan karbohidrat harianmu. Hitung langsung tanpa login —
+              buat akun hanya jika ingin menyimpan riwayat dan mengekspor
+              hasil.
             </p>
           </div>
 
@@ -56,22 +56,22 @@ export default function Home() {
           <FeatureCard
             icon={<Sparkles className="h-5 w-5 text-sky-300" />}
             title="Analisis mudah dibaca"
-            description="Hasil BMI langsung diterjemahkan ke tips praktis yang relevan."
+            description="Hasil BMI langsung diterjemahkan ke tips praktis yang relevan untukmu."
+          />
+          <FeatureCard
+            icon={<Sigma className="h-5 w-5 text-sky-300" />}
+            title="Rumus transparan"
+            description="Setiap angka bisa dibuka cara hitungnya — tidak ada hasil misterius."
+          />
+          <FeatureCard
+            icon={<History className="h-5 w-5 text-sky-300" />}
+            title="Riwayat tersimpan"
+            description="Simpan setiap pengukuran ke akunmu dan lihat kembali kapan saja."
           />
           <FeatureCard
             icon={<ShieldCheck className="h-5 w-5 text-sky-300" />}
-            title="Auth hanya saat perlu"
-            description="Login dibutuhkan hanya untuk save history dan export hasil."
-          />
-          <FeatureCard
-            icon={<Sparkles className="h-5 w-5 text-sky-300" />}
-            title="Siap jadi portfolio"
-            description="Dibangun dengan Next.js, Tailwind, Supabase, dan pola komponen reusable."
-          />
-          <FeatureCard
-            icon={<ShieldCheck className="h-5 w-5 text-sky-300" />}
-            title="Fokus pada pembelajaran"
-            description="Formula, UI, auth, history, dan export dipisah agar mudah dipelajari."
+            title="Datamu milikmu"
+            description="Riwayat hanya bisa dilihat olehmu dan bisa dihapus kapan pun."
           />
         </div>
       </section>
