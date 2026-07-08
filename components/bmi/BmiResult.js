@@ -78,6 +78,10 @@ export function BmiResult({ categoryContent, result, resultRef }) {
                   label="Lemak harian"
                   value={`${formatNumber(result.dailyFatGrams)} gram`}
                 />
+                <MetricCard
+                  label="Karbohidrat harian"
+                  value={`${formatNumber(result.dailyCarbGrams)} gram`}
+                />
               </div>
 
               <div className="rounded-2xl bg-slate-50 p-4">

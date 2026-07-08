@@ -93,6 +93,13 @@ function buildFormulaItems(result) {
       calculation: `(${formatFormulaNumber(result.dailyCalories)} x ${formatFormulaNumber(result.fatRatio, 2)}) / 9`,
       result: `${formatFormulaNumber(result.dailyFatGrams)} gram`,
     },
+    {
+      title: "Karbohidrat harian",
+      description: "Karbohidrat memakai sisa kalori setelah protein dan lemak.",
+      formula: "Karbohidrat = (kalori target - protein x 4 - lemak x 9) / 4",
+      calculation: `(${formatFormulaNumber(result.dailyCalories)} - ${formatFormulaNumber(result.dailyProteinGrams)} x 4 - ${formatFormulaNumber(result.dailyFatGrams)} x 9) / 4`,
+      result: `${formatFormulaNumber(result.dailyCarbGrams)} gram`,
+    },
   ];
 }
 

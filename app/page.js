@@ -29,9 +29,9 @@ export default function Home() {
             </h1>
             <p className="max-w-2xl text-base leading-7 text-slate-300 sm:text-lg">
               Aplikasi ini membantu pengguna menghitung BMI, berat badan ideal,
-              kalori, protein, dan lemak harian. User boleh langsung menghitung
-              tanpa login, lalu masuk hanya saat ingin menyimpan atau export
-              hasil.
+              kalori, protein, lemak, dan karbohidrat harian. User boleh
+              langsung menghitung tanpa login, lalu masuk hanya saat ingin
+              menyimpan atau export hasil.
             </p>
           </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { useAuth } from "@/components/auth-provider";
@@ -17,7 +17,7 @@ import {
   validateCalculatorInput,
 } from "@/lib/calculations";
 import { getCategoryContent } from "@/lib/explanations";
-import { exportElementToJpg, exportElementToPdf } from "@/lib/export";
+import { exportElementAs } from "@/lib/export";
 import {
   createSupabaseBrowserClient,
   hasSupabaseEnv,
@@ -87,6 +87,9 @@ export function useBmiAnalyzer() {
 
     const savedState = readPersistedCalculatorState();
 
+    /* eslint-disable react-hooks/set-state-in-effect --
+       sessionStorage hanya ada di client, jadi restore harus terjadi setelah
+       hydration; lazy useState initializer menyebabkan hydration mismatch. */
     if (savedState?.form) {
       setForm((current) => ({
         ...current,
@@ -97,6 +100,7 @@ export function useBmiAnalyzer() {
     if (savedState?.result) {
       setResult(savedState.result);
     }
+    /* eslint-enable react-hooks/set-state-in-effect */
 
     hasRestoredState.current = true;
   }, []);
@@ -162,10 +166,11 @@ export function useBmiAnalyzer() {
 
   /**
    * Saves the current analysis to the `bmi_histories` table for the logged-in user.
+   * Memoized so the post-login continuation effect can depend on it safely.
    *
    * @returns {Promise<void>}
    */
-  async function handleSave() {
+  const handleSave = useCallback(async () => {
     if (!result) {
       setError("Hitung BMI terlebih dahulu sebelum menyimpan hasil.");
       return;
@@ -214,7 +219,7 @@ export function useBmiAnalyzer() {
       );
       setStatus("");
     }
-  }
+  }, [authEnabled, result, user]);
 
   /**
    * Exports the rendered result section after enforcing the member-only rule
@@ -249,13 +254,7 @@ export function useBmiAnalyzer() {
     try {
       setError("");
       setStatus(`Menyiapkan file ${type.toUpperCase()}...`);
-
-      if (type === "jpg") {
-        await exportElementToJpg(resultRef.current, "bmi-analysis");
-      } else {
-        await exportElementToPdf(resultRef.current, "bmi-analysis");
-      }
-
+      await exportElementAs(type, resultRef.current, "bmi-analysis");
       setStatus(`Export ${type.toUpperCase()} berhasil.`);
     } catch (exportError) {
       setError(exportError.message || "Export gagal dilakukan.");
@@ -264,60 +263,54 @@ export function useBmiAnalyzer() {
   }
 
   useEffect(() => {
-    if (!user || !result || !pendingResumeAction || hasResumedAction.current) {
+    if (!user || !result || hasResumedAction.current) {
+      return;
+    }
+
+    // The pending action can arrive through the login redirect query param or,
+    // when the query param is lost, through the intent stored in session
+    // storage before the user left the calculator.
+    let action = pendingResumeAction;
+    const cameFromQueryParam = Boolean(pendingResumeAction);
+
+    if (!action) {
+      const storedIntent = readContinuationIntent();
+
+      if (!storedIntent || storedIntent.returnTo !== "/") {
+        return;
+      }
+
+      action = storedIntent.action;
+    }
+
+    if (action !== "save" && action !== "export") {
       return;
     }
 
     hasResumedAction.current = true;
 
-    if (pendingResumeAction === "save") {
+    if (action === "save") {
       setStatus("Login berhasil. Melanjutkan proses simpan hasil...");
       handleSave().finally(() => {
         clearContinuationIntent();
-        router.replace("/");
+
+        if (cameFromQueryParam) {
+          router.replace("/");
+        }
       });
       return;
     }
 
-    if (pendingResumeAction === "export") {
-      setPendingAction("");
-      setStatus(
-        "Login berhasil. Hasil sebelumnya dipulihkan. Klik tombol export sekali lagi untuk melanjutkan."
-      );
-      clearContinuationIntent();
+    setPendingAction("");
+    setStatus(
+      "Login berhasil. Hasil sebelumnya dipulihkan. Klik tombol export sekali lagi untuk melanjutkan."
+    );
+    clearContinuationIntent();
+
+    if (cameFromQueryParam) {
       router.replace("/");
     }
-  }, [pendingResumeAction, result, router, user]);
-
-  useEffect(() => {
-    if (pendingResumeAction || !user || !result || hasResumedAction.current) {
-      return;
-    }
-
-    const storedIntent = readContinuationIntent();
-
-    if (!storedIntent || storedIntent.returnTo !== "/") {
-      return;
-    }
-
-    if (storedIntent.action === "save") {
-      hasResumedAction.current = true;
-      setStatus("Login berhasil. Melanjutkan proses simpan hasil...");
-      handleSave().finally(() => {
-        clearContinuationIntent();
-      });
-      return;
-    }
-
-    if (storedIntent.action === "export") {
-      hasResumedAction.current = true;
-      setPendingAction("");
-      setStatus(
-        "Login berhasil. Hasil sebelumnya dipulihkan. Klik tombol export sekali lagi untuk melanjutkan."
-      );
-      clearContinuationIntent();
-    }
-  }, [pendingResumeAction, result, user]);
+  }, [handleSave, pendingResumeAction, result, router, user]);
 
   return {
     authEnabled,

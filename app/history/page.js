@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Download, ExternalLink, RefreshCcw } from "lucide-react";
+import { Download, ExternalLink, RefreshCcw, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -19,7 +19,7 @@ import {
 import { calculateAnalysis } from "@/lib/calculations";
 import { getCategoryContent, getActivityLabel } from "@/lib/explanations";
 import { clearContinuationIntent, writePersistedCalculatorState } from "@/lib/bmi-session";
-import { exportElementToJpg, exportElementToPdf } from "@/lib/export";
+import { exportElementAs } from "@/lib/export";
 import {
   createSupabaseBrowserClient,
   mapHistoryRecordToCalculatorInput,
@@ -40,6 +40,7 @@ export default function HistoryPage() {
   const [selectedId, setSelectedId] = useState("");
   const [detailStatus, setDetailStatus] = useState("");
   const [detailError, setDetailError] = useState("");
+  const [deletingId, setDeletingId] = useState("");
   const detailRef = useRef(null);
 
   useEffect(() => {
@@ -84,10 +85,17 @@ export default function HistoryPage() {
     }
   }, [authEnabled, loading, user]);
 
-  useEffect(() => {
+  /**
+   * Switches the highlighted history entry and clears feedback that belonged
+   * to the previously selected detail view.
+   *
+   * @param {string} id
+   */
+  function handleSelectItem(id) {
+    setSelectedId(id);
     setDetailError("");
     setDetailStatus("");
-  }, [selectedId]);
+  }
 
   const selectedItem = useMemo(
     () => items.find((item) => item.id === selectedId) ?? items[0] ?? null,
@@ -118,13 +126,7 @@ export default function HistoryPage() {
     try {
       setDetailError("");
       setDetailStatus(`Menyiapkan file ${type.toUpperCase()} dari history...`);
-
-      if (type === "jpg") {
-        await exportElementToJpg(detailRef.current, "bmi-history-detail");
-      } else {
-        await exportElementToPdf(detailRef.current, "bmi-history-detail");
-      }
-
+      await exportElementAs(type, detailRef.current, "bmi-history-detail");
       setDetailStatus(`Export ${type.toUpperCase()} dari history berhasil.`);
     } catch (exportError) {
       setDetailError(exportError.message || "Export history gagal dilakukan.");
@@ -144,6 +146,57 @@ export default function HistoryPage() {
       result: selectedResult,
     });
     router.push("/");
+  }
+
+  /**
+   * Permanently removes a saved history entry for the current user, then keeps
+   * the local list and selection in sync without needing a full refetch.
+   *
+   * @param {string} id
+   * @returns {Promise<void>}
+   */
+  async function handleDeleteItem(id) {
+    if (deletingId) {
+      return;
+    }
+
+    if (typeof window !== "undefined" && !window.confirm("Hapus hasil ini dari riwayat? Tindakan ini tidak bisa dibatalkan.")) {
+      return;
+    }
+
+    try {
+      setDetailError("");
+      setDeletingId(id);
+      const supabase = createSupabaseBrowserClient();
+
+      if (!supabase) {
+        throw new Error("Supabase client tidak tersedia.");
+      }
+
+      const { error: deleteError } = await supabase
+        .from("bmi_histories")
+        .delete()
+        .eq("id", id)
+        .eq("user_id", user.id);
+
+      if (deleteError) {
+        throw deleteError;
+      }
+
+      const remaining = items.filter((item) => item.id !== id);
+
+      setItems(remaining);
+
+      if (selectedId === id) {
+        setSelectedId(remaining[0]?.id ?? "");
+      }
+
+      setDetailStatus("Riwayat berhasil dihapus.");
+    } catch (deleteError) {
+      setDetailError(deleteError.message || "Riwayat gagal dihapus.");
+    } finally {
+      setDeletingId("");
+    }
   }
 
   if (!authEnabled) {
@@ -337,7 +390,7 @@ export default function HistoryPage() {
               </div>
 
               <div className="flex flex-wrap gap-3">
-                <Button type="button" onClick={() => setSelectedId(item.id)}>
+                <Button type="button" onClick={() => handleSelectItem(item.id)}>
                   <ExternalLink className="mr-2 h-4 w-4" />
                   {selectedItem?.id === item.id ? "Detail sedang dibuka" : "Lihat detail"}
                 </Button>
@@ -345,7 +398,7 @@ export default function HistoryPage() {
                   type="button"
                   variant="secondary"
                   onClick={() => {
-                    setSelectedId(item.id);
+                    handleSelectItem(item.id);
                     setTimeout(() => {
                       detailRef.current?.scrollIntoView({
                         behavior: "smooth",
@@ -355,6 +408,16 @@ export default function HistoryPage() {
                   }}
                 >
                   Buka detail lengkap
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => handleDeleteItem(item.id)}
+                  disabled={deletingId === item.id}
+                  className="text-rose-600 hover:bg-rose-50 hover:text-rose-700"
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  {deletingId === item.id ? "Menghapus..." : "Hapus"}
                 </Button>
               </div>
             </CardContent>
