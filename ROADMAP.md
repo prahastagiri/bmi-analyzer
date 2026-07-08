@@ -23,16 +23,23 @@ Aturan main antar fase:
 - [x] `supabase/schema.sql` di repo — sudah ada sejak awal; diperbarui: **policy DELETE**
       (wajib untuk fitur hapus history — tanpa ini delete gagal diam-diam karena RLS),
       index `(user_id, created_at desc)`, dan guard idempotent.
-- [ ] **Jalankan ulang `supabase/schema.sql` di SQL Editor project Supabase production**
-      — langkah owner; fitur hapus history di production menunggu ini.
+- [x] **Jalankan ulang `supabase/schema.sql` di SQL Editor project Supabase production**
+      — dilakukan owner 2026-07-08; policy DELETE terverifikasi bekerja dari uji lokal.
 - [x] `.env.example` dibuat (+ pengecualian di `.gitignore`).
-- [ ] Isi `.env.local` lokal dari kredensial project Supabase (langkah owner; jangan
-      commit). Setelah itu uji lokal: register → login → simpan → history → hapus →
-      export. Selama ini alur tersebut hanya teruji dalam demo mode di lokal.
+- [x] `.env.local` lokal terisi (2026-07-08). Uji lokal lengkap terhadap Supabase nyata
+      LULUS: register → login (email confirmation aktif) → auto-resume simpan via
+      continuation → history termuat → hapus (terbukti hilang permanen setelah reload)
+      → export JPG → logout. Catatan: export PDF belum teruji otomatis (print dialog
+      tidak bisa dijalankan headless) — cek manual sekali di browser.
 
 **Definition of Done:** repo bersih (semua ter-commit), schema production sinkron
 dengan `supabase/schema.sql`, app lokal berjalan dengan Supabase nyata dan seluruh
 alur auth+data terverifikasi manual.
+
+> ✅ **FASE 0 SELESAI (2026-07-08).** Temuan untuk Fase 1: (a) pesan error Supabase
+> tampil mentah bahasa Inggris ("Email not confirmed") di UI berbahasa Indonesia —
+> perlu pemetaan pesan; (b) pesan sukses hapus tidak terlihat saat entri terakhir
+> dihapus (kartu detail ikut hilang); (c) fitur baru belum di-push ke production.
 
 ---
 
