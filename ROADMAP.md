@@ -47,10 +47,12 @@ alur auth+data terverifikasi manual.
 
 Aplikasi sudah live — fase ini memastikan yang live itu layak dipakai orang asing.
 
+> URL production: **https://bmi-analyzer-phi.vercel.app**
+
 - [ ] Uji alur lengkap di URL production: register (termasuk email confirmation +
       redirect URL Supabase), login, simpan, history, hapus, export.
-- [ ] Pastikan deploy production memuat fitur terbaru (push butuh perintah eksplisit
-      owner — push = deploy).
+- [x] Deploy production memuat fitur terbaru — di-push 2026-07-08 atas perintah owner,
+      terverifikasi live (landing baru + fitur karbo tayang).
 - [ ] **Reset password** — alur "lupa password" belum ada sama sekali; wajib sebelum
       ada pengguna nyata.
 - [ ] CI sederhana: GitHub Actions menjalankan `npm run lint` + `npm test` di tiap push.
