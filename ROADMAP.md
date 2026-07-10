@@ -56,12 +56,17 @@ Aplikasi sudah live — fase ini memastikan yang live itu layak dipakai orang as
 
 - [ ] Uji alur lengkap di URL production: register (termasuk email confirmation +
       redirect URL Supabase), login, simpan, history, hapus, export.
-      > Smoke test 2026-07-10: `/`, `/login`, `/register`, `/history` semua 200;
-      > `/forgot-password` & `/privacy` masih 404 karena commit Fase 1 belum di-push.
-      > Uji alur auth lengkap baru bermakna SETELAH push berikutnya, dan butuh owner
-      > (email confirmation masuk inbox owner). Gunakan akun `qcumberlarry+bmitestN@gmail.com`.
+      > Pasca push 2026-07-10: seluruh halaman (termasuk `/forgot-password`,
+      > `/privacy`, `/terms`, sitemap, robots, OG image) 200 di
+      > https://healthymuch.prahastagiri.com. Sisa yang hanya bisa owner: alur auth
+      > lengkap end-to-end (register `qcumberlarry+bmitestN@gmail.com` → klik email
+      > confirmation → login → simpan → hapus → export → reset password) — prasyarat:
+      > Site URL & Redirect URLs di Supabase sudah menunjuk domain baru.
 - [x] Deploy production memuat fitur terbaru — di-push 2026-07-08 atas perintah owner,
-      terverifikasi live (landing baru + fitur karbo tayang).
+      terverifikasi live (landing baru + fitur karbo tayang). Push kedua 2026-07-10
+      (10 commit): seluruh Fase 1 + rebrand HealthyMuch tayang di
+      https://healthymuch.prahastagiri.com — domain custom aktif, halaman baru 200,
+      title/OG/sitemap/robots semua menunjuk domain baru.
 - [x] **Reset password** (2026-07-10) — `/forgot-password` (kirim link via
       `resetPasswordForEmail`) + `/reset-password` (form password baru, tangani link
       kedaluwarsa via hash error), link "Lupa password?" di login. Teruji lokal:
@@ -77,7 +82,8 @@ Aplikasi sudah live — fase ini memastikan yang live itu layak dipakai orang as
       Terverifikasi lokal: "Invalid login credentials" tampil sebagai pesan Indonesia.
 - [x] CI sederhana (2026-07-10): `.github/workflows/ci.yml` — lint + test + build di
       tiap push/PR (Node 20, npm cache). Build tanpa env Supabase = demo mode,
-      diverifikasi lokal. Status hijau di GitHub baru terbukti setelah push berikutnya.
+      diverifikasi lokal. CI HIJAU pada run pertama pasca push 2026-07-10
+      (https://github.com/prahastagiri/bmi-analyzer/actions/runs/29081185322).
 - [ ] Error monitoring (Sentry free tier) — tanpa ini, bug pengguna tidak akan pernah
       kamu ketahui.
       > Menunggu owner (2026-07-10): buat project Sentry (platform Next.js) di
@@ -100,7 +106,8 @@ Aplikasi sudah live — fase ini memastikan yang live itu layak dipakai orang as
       untuk halaman client; history & reset-password noindex), root title mengangkat
       "Kalkulator BMI", Open Graph lengkap + OG image tergenerate
       (`app/opengraph-image.js`, 1200×630), `app/sitemap.js` + `app/robots.js`
-      (URL production di `lib/site.js`). Semua terverifikasi lokal.
+      (URL production di `lib/site.js`). Semua terverifikasi lokal dan (2026-07-10,
+      pasca push) terverifikasi live di domain production.
 
 **Definition of Done:** URL production bisa dipakai orang asing tanpa bantuanmu,
 error masuk ke Sentry, pengunjung terhitung, CI hijau.
