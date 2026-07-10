@@ -54,14 +54,13 @@ Aplikasi sudah live — fase ini memastikan yang live itu layak dipakai orang as
 > `healthymuch` ke `cname.vercel-dns.com`, (3) Supabase → Auth → URL
 > Configuration → ganti Site URL ke domain baru.
 
-- [ ] Uji alur lengkap di URL production: register (termasuk email confirmation +
+- [x] Uji alur lengkap di URL production: register (termasuk email confirmation +
       redirect URL Supabase), login, simpan, history, hapus, export.
       > Pasca push 2026-07-10: seluruh halaman (termasuk `/forgot-password`,
       > `/privacy`, `/terms`, sitemap, robots, OG image) 200 di
-      > https://healthymuch.prahastagiri.com. Sisa yang hanya bisa owner: alur auth
-      > lengkap end-to-end (register `qcumberlarry+bmitestN@gmail.com` → klik email
-      > confirmation → login → simpan → hapus → export → reset password) — prasyarat:
-      > Site URL & Redirect URLs di Supabase sudah menunjuk domain baru.
+      > https://healthymuch.prahastagiri.com. **Uji auth end-to-end LULUS oleh owner
+      > (2026-07-10):** register → email confirmation → login → simpan → history →
+      > hapus → export berjalan di domain production.
 - [x] Deploy production memuat fitur terbaru — di-push 2026-07-08 atas perintah owner,
       terverifikasi live (landing baru + fitur karbo tayang). Push kedua 2026-07-10
       (10 commit): seluruh Fase 1 + rebrand HealthyMuch tayang di
@@ -122,6 +121,16 @@ Aplikasi sudah live — fase ini memastikan yang live itu layak dipakai orang as
 
 **Definition of Done:** URL production bisa dipakai orang asing tanpa bantuanmu,
 error masuk ke Sentry, pengunjung terhitung, CI hijau.
+
+> ✅ **FASE 1 SELESAI (2026-07-10).** App live sebagai **HealthyMuch** di
+> https://healthymuch.prahastagiri.com (domain custom aktif). Semua tercapai:
+> reset password, pesan error Indonesia, CI hijau, Sentry (DSN aktif di
+> production), Vercel Analytics (toggle aktif), privacy+terms, SEO
+> (metadata/OG/sitemap/robots), feedback aksi simpan/export & hapus history.
+> Uji alur auth end-to-end di production LULUS oleh owner. Definition of Done
+> terpenuhi. Catatan untuk Fase 2: sebelum menulis kode entitlement/pembayaran
+> (Fase 3), lakukan dulu migrasi bertahap JS → TypeScript (lihat Keputusan Tech
+> Stack di bawah).
 
 ---
 
