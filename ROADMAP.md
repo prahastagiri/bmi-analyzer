@@ -90,14 +90,14 @@ Aplikasi sudah live — fase ini memastikan yang live itu layak dipakai orang as
       error-only (tanpa tracing/replay, hemat kuota free tier), aktif hanya di
       production. Teruji end-to-end: event percobaan terkirim 200 ke ingest Sentry
       (cek dashboard: "Uji integrasi Sentry HealthyMuch — abaikan event ini").
-      **Aksi owner sebelum/bersamaan push berikutnya:** tambah env
-      `NEXT_PUBLIC_SENTRY_DSN` di Vercel → Settings → Environment Variables
-      (nilai sama dengan di .env.local). Opsional nanti: SENTRY_AUTH_TOKEN +
+      Env `NEXT_PUBLIC_SENTRY_DSN` di Vercel **sudah ditambahkan owner (2026-07-10)** —
+      diverifikasi bahwa nilai DSN benar-benar ter-inline di bundle production, jadi
+      error live akan masuk ke dashboard Sentry. Opsional nanti: SENTRY_AUTH_TOKEN +
       org/project di next.config.mjs agar stack trace tidak ter-minify.
 - [x] Analytics ringan (2026-07-10): `@vercel/analytics` terpasang, `<Analytics />` di
       `app/layout.js`. Terverifikasi lokal (debug mode mencatat pageview tanpa error).
-      **Aksi owner:** aktifkan toggle Analytics di dashboard Vercel project ini —
-      tanpa itu data production tidak terkumpul.
+      Toggle Analytics di dashboard Vercel **sudah diaktifkan owner (2026-07-10)** —
+      pengunjung production kini terhitung.
 - [x] Halaman privacy policy + terms (2026-07-10): `/privacy` + `/terms` statis dalam
       bahasa Indonesia (isi jujur: data yang disimpan, Supabase+RLS, analytics agregat,
       hak hapus, disclaimer medis), tertaut dari footer baru di `app/layout.js`.
