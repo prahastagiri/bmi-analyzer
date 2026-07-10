@@ -84,11 +84,16 @@ Aplikasi sudah live — fase ini memastikan yang live itu layak dipakai orang as
       tiap push/PR (Node 20, npm cache). Build tanpa env Supabase = demo mode,
       diverifikasi lokal. CI HIJAU pada run pertama pasca push 2026-07-10
       (https://github.com/prahastagiri/bmi-analyzer/actions/runs/29081185322).
-- [ ] Error monitoring (Sentry free tier) — tanpa ini, bug pengguna tidak akan pernah
-      kamu ketahui.
-      > Menunggu owner (2026-07-10): buat project Sentry (platform Next.js) di
-      > sentry.io free tier, lalu berikan DSN-nya — setelah itu integrasi kode
-      > (`@sentry/nextjs` + env) bisa langsung dikerjakan.
+- [x] Error monitoring — Sentry (2026-07-10): `@sentry/nextjs` v10 terpasang
+      (instrumentation-client/server/edge + `app/global-error.js` + `withSentryConfig`),
+      DSN via `NEXT_PUBLIC_SENTRY_DSN` (.env.local; .env.example diperbarui). Mode:
+      error-only (tanpa tracing/replay, hemat kuota free tier), aktif hanya di
+      production. Teruji end-to-end: event percobaan terkirim 200 ke ingest Sentry
+      (cek dashboard: "Uji integrasi Sentry HealthyMuch — abaikan event ini").
+      **Aksi owner sebelum/bersamaan push berikutnya:** tambah env
+      `NEXT_PUBLIC_SENTRY_DSN` di Vercel → Settings → Environment Variables
+      (nilai sama dengan di .env.local). Opsional nanti: SENTRY_AUTH_TOKEN +
+      org/project di next.config.mjs agar stack trace tidak ter-minify.
 - [x] Analytics ringan (2026-07-10): `@vercel/analytics` terpasang, `<Analytics />` di
       `app/layout.js`. Terverifikasi lokal (debug mode mencatat pageview tanpa error).
       **Aksi owner:** aktifkan toggle Analytics di dashboard Vercel project ini —
