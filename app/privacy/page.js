@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Kebijakan Privasi — BMI Analyzer",
+  title: "Kebijakan Privasi",
   description:
     "Data apa yang disimpan BMI Analyzer, di mana disimpan, dan hak kamu atas data tersebut.",
 };

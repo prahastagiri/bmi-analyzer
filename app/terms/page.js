@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Ketentuan Layanan — BMI Analyzer",
+  title: "Ketentuan Layanan",
   description:
     "Ketentuan penggunaan BMI Analyzer: layanan gratis, batasan medis, dan tanggung jawab pengguna.",
 };

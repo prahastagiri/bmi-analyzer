@@ -78,8 +78,11 @@ Aplikasi sudah live — fase ini memastikan yang live itu layak dipakai orang as
       bahasa Indonesia (isi jujur: data yang disimpan, Supabase+RLS, analytics agregat,
       hak hapus, disclaimer medis), tertaut dari footer baru di `app/layout.js`.
       Kontak memakai `qcumberlarry@gmail.com` — ganti jika owner mau alamat lain.
-- [ ] SEO dasar: `metadata` per halaman, OG image, sitemap. Kata kunci "kalkulator BMI"
-      adalah sumber trafik organik utama.
+- [x] SEO dasar (2026-07-10): `metadata` per halaman (title template + layout wrapper
+      untuk halaman client; history & reset-password noindex), root title mengangkat
+      "Kalkulator BMI", Open Graph lengkap + OG image tergenerate
+      (`app/opengraph-image.js`, 1200×630), `app/sitemap.js` + `app/robots.js`
+      (URL production di `lib/site.js`). Semua terverifikasi lokal.
 
 **Definition of Done:** URL production bisa dipakai orang asing tanpa bantuanmu,
 error masuk ke Sentry, pengunjung terhitung, CI hijau.

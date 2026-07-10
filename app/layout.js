@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AppHeader } from "@/components/app-header";
 import { AuthProvider } from "@/components/auth-provider";
+import { SITE_URL } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,9 +17,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "BMI Analyzer",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Kalkulator BMI & Kebutuhan Nutrisi Harian — BMI Analyzer",
+    template: "%s — BMI Analyzer",
+  },
   description:
-    "Hitung BMI, berat badan ideal, dan kebutuhan kalori, protein, lemak, serta karbohidrat harianmu. Gratis tanpa login, lengkap dengan riwayat dan export hasil.",
+    "Kalkulator BMI gratis: hitung BMI, berat badan ideal, dan kebutuhan kalori, protein, lemak, serta karbohidrat harianmu. Tanpa login, lengkap dengan riwayat dan export hasil.",
+  openGraph: {
+    title: "Kalkulator BMI & Kebutuhan Nutrisi Harian — BMI Analyzer",
+    description:
+      "Hitung BMI, berat badan ideal, dan kebutuhan nutrisi harianmu secara gratis, langsung tanpa login.",
+    url: SITE_URL,
+    siteName: "BMI Analyzer",
+    locale: "id_ID",
+    type: "website",
+  },
 };
 
 /**
