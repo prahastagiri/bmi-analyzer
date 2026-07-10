@@ -65,7 +65,9 @@ Aplikasi sudah live — fase ini memastikan yang live itu layak dipakai orang as
       (map per `error.code` + fallback pola pesan + fallback generik, error mentah
       tetap di-log) dipakai di login, register, forgot/reset password. Ada unit test.
       Terverifikasi lokal: "Invalid login credentials" tampil sebagai pesan Indonesia.
-- [ ] CI sederhana: GitHub Actions menjalankan `npm run lint` + `npm test` di tiap push.
+- [x] CI sederhana (2026-07-10): `.github/workflows/ci.yml` — lint + test + build di
+      tiap push/PR (Node 20, npm cache). Build tanpa env Supabase = demo mode,
+      diverifikasi lokal. Status hijau di GitHub baru terbukti setelah push berikutnya.
 - [ ] Error monitoring (Sentry free tier) — tanpa ini, bug pengguna tidak akan pernah
       kamu ketahui.
 - [ ] Analytics ringan (Vercel Analytics cukup) — angka pengunjung adalah dasar semua
