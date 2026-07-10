@@ -1,4 +1,5 @@
 import { Analytics } from "@vercel/analytics/next";
+import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AppHeader } from "@/components/app-header";
@@ -39,6 +40,22 @@ export default function RootLayout({ children }) {
           <div className="flex min-h-screen flex-col">
             <AppHeader />
             <main className="flex-1">{children}</main>
+            <footer className="border-t border-slate-200 bg-white">
+              <div className="mx-auto flex w-full max-w-7xl flex-col gap-2 px-4 py-6 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                <p>
+                  BMI Analyzer — panduan umum, bukan pengganti konsultasi
+                  medis.
+                </p>
+                <nav className="flex gap-4">
+                  <Link href="/privacy" className="hover:text-slate-700">
+                    Kebijakan Privasi
+                  </Link>
+                  <Link href="/terms" className="hover:text-slate-700">
+                    Ketentuan Layanan
+                  </Link>
+                </nav>
+              </div>
+            </footer>
           </div>
         </AuthProvider>
         <Analytics />

@@ -74,8 +74,10 @@ Aplikasi sudah live — fase ini memastikan yang live itu layak dipakai orang as
       `app/layout.js`. Terverifikasi lokal (debug mode mencatat pageview tanpa error).
       **Aksi owner:** aktifkan toggle Analytics di dashboard Vercel project ini —
       tanpa itu data production tidak terkumpul.
-- [ ] Halaman privacy policy + terms sederhana (prasyarat kepercayaan, AdSense, dan
-      pemrosesan data kesehatan).
+- [x] Halaman privacy policy + terms (2026-07-10): `/privacy` + `/terms` statis dalam
+      bahasa Indonesia (isi jujur: data yang disimpan, Supabase+RLS, analytics agregat,
+      hak hapus, disclaimer medis), tertaut dari footer baru di `app/layout.js`.
+      Kontak memakai `qcumberlarry@gmail.com` — ganti jika owner mau alamat lain.
 - [ ] SEO dasar: `metadata` per halaman, OG image, sitemap. Kata kunci "kalkulator BMI"
       adalah sumber trafik organik utama.
 
