@@ -51,6 +51,10 @@ Aplikasi sudah live — fase ini memastikan yang live itu layak dipakai orang as
 
 - [ ] Uji alur lengkap di URL production: register (termasuk email confirmation +
       redirect URL Supabase), login, simpan, history, hapus, export.
+      > Smoke test 2026-07-10: `/`, `/login`, `/register`, `/history` semua 200;
+      > `/forgot-password` & `/privacy` masih 404 karena commit Fase 1 belum di-push.
+      > Uji alur auth lengkap baru bermakna SETELAH push berikutnya, dan butuh owner
+      > (email confirmation masuk inbox owner). Gunakan akun `qcumberlarry+bmitestN@gmail.com`.
 - [x] Deploy production memuat fitur terbaru — di-push 2026-07-08 atas perintah owner,
       terverifikasi live (landing baru + fitur karbo tayang).
 - [x] **Reset password** (2026-07-10) — `/forgot-password` (kirim link via
@@ -70,6 +74,9 @@ Aplikasi sudah live — fase ini memastikan yang live itu layak dipakai orang as
       diverifikasi lokal. Status hijau di GitHub baru terbukti setelah push berikutnya.
 - [ ] Error monitoring (Sentry free tier) — tanpa ini, bug pengguna tidak akan pernah
       kamu ketahui.
+      > Menunggu owner (2026-07-10): buat project Sentry (platform Next.js) di
+      > sentry.io free tier, lalu berikan DSN-nya — setelah itu integrasi kode
+      > (`@sentry/nextjs` + env) bisa langsung dikerjakan.
 - [x] Analytics ringan (2026-07-10): `@vercel/analytics` terpasang, `<Analytics />` di
       `app/layout.js`. Terverifikasi lokal (debug mode mencatat pageview tanpa error).
       **Aksi owner:** aktifkan toggle Analytics di dashboard Vercel project ini —
