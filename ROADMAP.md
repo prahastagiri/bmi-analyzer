@@ -102,6 +102,12 @@ Aplikasi sudah live — fase ini memastikan yang live itu layak dipakai orang as
       terakhir dihapus dan kartu detail ikut hilang. Error hapus kini berbahasa
       Indonesia, error mentah di-log. (Belum diuji ulang di browser dengan akun login —
       butuh sesi login; tercakup di uji production oleh owner.)
+- [x] UX feedback aksi (2026-07-10, permintaan owner): feedback simpan/export kini
+      dirender tepat di bawah tombolnya di panel "Aksi lanjutan" (sebelumnya nyasar di
+      kartu form kiri sehingga tak terlihat), plus state sibuk — tombol disable,
+      spinner, label "Menyimpan...", "Menyiapkan JPG/PDF...", dan pesan sukses/gagal.
+      CTA login (continuation) ikut pindah ke panel aksi. Jalur sukses/busy penuh
+      butuh sesi login — tercakup di uji production owner.
 - [x] SEO dasar (2026-07-10): `metadata` per halaman (title template + layout wrapper
       untuk halaman client; history & reset-password noindex), root title mengangkat
       "Kalkulator BMI", Open Graph lengkap + OG image tergenerate

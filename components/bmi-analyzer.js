@@ -14,7 +14,10 @@ import { useBmiAnalyzer } from "@/hooks/useBmiAnalyzer";
  */
 export function BmiAnalyzer() {
   const {
+    actionError,
+    actionStatus,
     authEnabled,
+    busyAction,
     categoryContent,
     error,
     form,
@@ -37,11 +40,8 @@ export function BmiAnalyzer() {
         authEnabled={authEnabled}
         error={error}
         form={form}
-        loginHref={loginHref}
         onCalculate={handleCalculate}
         onReset={handleReset}
-        pendingAction={pendingAction}
-        registerHref={registerHref}
         status={status}
         updateField={updateField}
       />
@@ -53,9 +53,15 @@ export function BmiAnalyzer() {
           resultRef={resultRef}
         />
         <BmiActions
+          actionError={actionError}
+          actionStatus={actionStatus}
+          busyAction={busyAction}
           hasResult={Boolean(result)}
+          loginHref={loginHref}
           onExport={handleExport}
           onSave={handleSave}
+          pendingAction={pendingAction}
+          registerHref={registerHref}
         />
       </div>
     </div>

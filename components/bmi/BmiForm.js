@@ -1,8 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { LogIn } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,7 +14,8 @@ import { Select } from "@/components/ui/select";
 
 /**
  * Form section for collecting the user's body metrics and showing inline form
- * feedback such as validation errors, auth gating messages, and success state.
+ * feedback such as validation errors and calculate success state. Feedback
+ * for save/export actions renders in `BmiActions`, next to those buttons.
  *
  * @param {{
  *   authEnabled: boolean,
@@ -29,11 +27,8 @@ import { Select } from "@/components/ui/select";
  *     gender: string,
  *     activityLevel: string
  *   },
- *   loginHref: string,
  *   onCalculate: (event: import("react").FormEvent<HTMLFormElement>) => void,
  *   onReset: () => void,
- *   pendingAction: string,
- *   registerHref: string,
  *   status: string,
  *   updateField: (field: "heightCm" | "weightKg" | "age" | "gender" | "activityLevel", value: string) => void
  * }} props
@@ -43,11 +38,8 @@ export function BmiForm({
   authEnabled,
   error,
   form,
-  loginHref,
   onCalculate,
   onReset,
-  pendingAction,
-  registerHref,
   status,
   updateField,
 }) {
@@ -131,24 +123,7 @@ export function BmiForm({
 
           {error ? (
             <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-              <p>{error}</p>
-              {pendingAction ? (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <Link
-                    href={loginHref}
-                    className="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 font-medium text-rose-700 ring-1 ring-rose-200"
-                  >
-                    <LogIn className="h-4 w-4" />
-                    Login sekarang
-                  </Link>
-                  <Link
-                    href={registerHref}
-                    className="inline-flex items-center rounded-xl bg-rose-700 px-3 py-2 font-medium text-white"
-                  >
-                    Buat akun
-                  </Link>
-                </div>
-              ) : null}
+              {error}
             </div>
           ) : null}
 

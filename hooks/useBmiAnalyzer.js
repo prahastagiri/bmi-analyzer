@@ -38,7 +38,10 @@ const initialForm = {
  * place so the UI components can stay focused on presentation.
  *
  * @returns {{
+ *   actionError: string,
+ *   actionStatus: string,
  *   authEnabled: boolean,
+ *   busyAction: "" | "save" | "jpg" | "pdf",
  *   categoryContent: { label: string, summary: string, tips: string[] } | null,
  *   error: string,
  *   form: {
@@ -70,6 +73,11 @@ export function useBmiAnalyzer() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
+  // Feedback for save/export lives in its own channel so it can be rendered
+  // next to the action buttons instead of inside the form card.
+  const [actionError, setActionError] = useState("");
+  const [actionStatus, setActionStatus] = useState("");
+  const [busyAction, setBusyAction] = useState("");
   const [pendingAction, setPendingAction] = useState("");
 
   const categoryContent = useMemo(
@@ -139,6 +147,8 @@ export function useBmiAnalyzer() {
     event.preventDefault();
     setError("");
     setStatus("");
+    setActionError("");
+    setActionStatus("");
     setPendingAction("");
 
     const validationMessage = validateCalculatorInput(form);
@@ -160,6 +170,8 @@ export function useBmiAnalyzer() {
     setResult(null);
     setError("");
     setStatus("");
+    setActionError("");
+    setActionStatus("");
     setPendingAction("");
     clearContinuationIntent();
   }
@@ -172,12 +184,14 @@ export function useBmiAnalyzer() {
    */
   const handleSave = useCallback(async () => {
     if (!result) {
-      setError("Hitung BMI terlebih dahulu sebelum menyimpan hasil.");
+      setActionStatus("");
+      setActionError("Hitung BMI terlebih dahulu sebelum menyimpan hasil.");
       return;
     }
 
     if (!authEnabled || !hasSupabaseEnv()) {
-      setError(
+      setActionStatus("");
+      setActionError(
         "Supabase belum dikonfigurasi. Tambahkan env Supabase agar fitur simpan aktif."
       );
       return;
@@ -189,13 +203,15 @@ export function useBmiAnalyzer() {
         action: "save",
         returnTo: "/",
       });
-      setError("Login diperlukan untuk menyimpan hasil perhitungan.");
+      setActionStatus("");
+      setActionError("Login diperlukan untuk menyimpan hasil perhitungan.");
       return;
     }
 
     try {
-      setError("");
-      setStatus("Menyimpan hasil ke akunmu...");
+      setActionError("");
+      setActionStatus("Menyimpan hasil ke akunmu...");
+      setBusyAction("save");
       const supabase = createSupabaseBrowserClient();
 
       if (!supabase) {
@@ -211,13 +227,15 @@ export function useBmiAnalyzer() {
         throw insertError;
       }
 
-      setStatus("Hasil berhasil disimpan.");
+      setActionStatus("Hasil berhasil disimpan. Lihat di halaman riwayat kapan saja.");
     } catch (saveError) {
       console.error("Gagal menyimpan hasil BMI:", saveError);
-      setError(
+      setActionError(
         "Hasil gagal disimpan. Coba lagi beberapa saat lagi — jika masih gagal, muat ulang halaman."
       );
-      setStatus("");
+      setActionStatus("");
+    } finally {
+      setBusyAction("");
     }
   }, [authEnabled, result, user]);
 
@@ -230,12 +248,14 @@ export function useBmiAnalyzer() {
    */
   async function handleExport(type) {
     if (!result) {
-      setError("Hitung BMI terlebih dahulu sebelum export hasil.");
+      setActionStatus("");
+      setActionError("Hitung BMI terlebih dahulu sebelum export hasil.");
       return;
     }
 
     if (!authEnabled || !hasSupabaseEnv()) {
-      setError(
+      setActionStatus("");
+      setActionError(
         "Supabase belum dikonfigurasi. Login diperlukan untuk memakai fitur export."
       );
       return;
@@ -247,18 +267,26 @@ export function useBmiAnalyzer() {
         action: "export",
         returnTo: "/",
       });
-      setError("Login diperlukan untuk export hasil ke JPG atau PDF.");
+      setActionStatus("");
+      setActionError("Login diperlukan untuk export hasil ke JPG atau PDF.");
       return;
     }
 
     try {
-      setError("");
-      setStatus(`Menyiapkan file ${type.toUpperCase()}...`);
+      setActionError("");
+      setActionStatus(`Menyiapkan file ${type.toUpperCase()}...`);
+      setBusyAction(type);
       await exportElementAs(type, resultRef.current, "bmi-analysis");
-      setStatus(`Export ${type.toUpperCase()} berhasil.`);
+      setActionStatus(
+        type === "pdf"
+          ? "Export PDF berhasil. Jika dialog print muncul, pilih \"Save as PDF\"."
+          : "Export JPG berhasil. File tersimpan di folder unduhan."
+      );
     } catch (exportError) {
-      setError(exportError.message || "Export gagal dilakukan.");
-      setStatus("");
+      setActionError(exportError.message || "Export gagal dilakukan.");
+      setActionStatus("");
+    } finally {
+      setBusyAction("");
     }
   }
 
@@ -290,7 +318,7 @@ export function useBmiAnalyzer() {
     hasResumedAction.current = true;
 
     if (action === "save") {
-      setStatus("Login berhasil. Melanjutkan proses simpan hasil...");
+      setActionStatus("Login berhasil. Melanjutkan proses simpan hasil...");
       handleSave().finally(() => {
         clearContinuationIntent();
 
@@ -302,7 +330,7 @@ export function useBmiAnalyzer() {
     }
 
     setPendingAction("");
-    setStatus(
+    setActionStatus(
       "Login berhasil. Hasil sebelumnya dipulihkan. Klik tombol export sekali lagi untuk melanjutkan."
     );
     clearContinuationIntent();
@@ -313,7 +341,10 @@ export function useBmiAnalyzer() {
   }, [handleSave, pendingResumeAction, result, router, user]);
 
   return {
+    actionError,
+    actionStatus,
     authEnabled,
+    busyAction,
     categoryContent,
     error,
     form,
