@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { translateAuthError } from "@/lib/auth-errors";
 import { clearContinuationIntent, writeContinuationIntent } from "@/lib/bmi-session";
 import { createSupabaseBrowserClient } from "@/lib/supabase";
 
@@ -120,7 +121,7 @@ function LoginPageInner() {
       );
       router.refresh();
     } catch (signInError) {
-      setError(signInError.message || "Login gagal. Periksa kembali akunmu.");
+      setError(translateAuthError(signInError, "Login gagal. Periksa kembali akunmu."));
     } finally {
       setLoading(false);
     }
@@ -152,7 +153,15 @@ function LoginPageInner() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <Link
+                  href="/forgot-password"
+                  className="text-sm font-medium text-sky-700"
+                >
+                  Lupa password?
+                </Link>
+              </div>
               <Input
                 id="password"
                 type="password"

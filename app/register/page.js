@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { translateAuthError } from "@/lib/auth-errors";
 import { writeContinuationIntent } from "@/lib/bmi-session";
 import { createSupabaseBrowserClient } from "@/lib/supabase";
 
@@ -127,7 +128,7 @@ function RegisterPageInner() {
       );
       router.push(loginHref);
     } catch (signUpError) {
-      setError(signUpError.message || "Pendaftaran gagal. Coba lagi.");
+      setError(translateAuthError(signUpError, "Pendaftaran gagal. Coba lagi."));
     } finally {
       setLoading(false);
     }

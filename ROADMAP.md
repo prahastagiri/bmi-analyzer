@@ -53,8 +53,18 @@ Aplikasi sudah live — fase ini memastikan yang live itu layak dipakai orang as
       redirect URL Supabase), login, simpan, history, hapus, export.
 - [x] Deploy production memuat fitur terbaru — di-push 2026-07-08 atas perintah owner,
       terverifikasi live (landing baru + fitur karbo tayang).
-- [ ] **Reset password** — alur "lupa password" belum ada sama sekali; wajib sebelum
-      ada pengguna nyata.
+- [x] **Reset password** (2026-07-10) — `/forgot-password` (kirim link via
+      `resetPasswordForEmail`) + `/reset-password` (form password baru, tangani link
+      kedaluwarsa via hash error), link "Lupa password?" di login. Teruji lokal:
+      kirim email sukses, state tanpa-sesi & link-kedaluwarsa tampil benar.
+      **Aksi owner:** tambahkan `https://bmi-analyzer-phi.vercel.app/reset-password`
+      dan `http://localhost:3210/reset-password` ke Supabase → Auth → URL
+      Configuration → Redirect URLs, lalu klik link reset di inbox untuk uji
+      end-to-end penggantian password.
+- [x] **Pemetaan pesan error Supabase → Indonesia** (2026-07-10) — `lib/auth-errors.js`
+      (map per `error.code` + fallback pola pesan + fallback generik, error mentah
+      tetap di-log) dipakai di login, register, forgot/reset password. Ada unit test.
+      Terverifikasi lokal: "Invalid login credentials" tampil sebagai pesan Indonesia.
 - [ ] CI sederhana: GitHub Actions menjalankan `npm run lint` + `npm test` di tiap push.
 - [ ] Error monitoring (Sentry free tier) — tanpa ini, bug pengguna tidak akan pernah
       kamu ketahui.
