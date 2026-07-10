@@ -78,6 +78,11 @@ Aplikasi sudah live — fase ini memastikan yang live itu layak dipakai orang as
       bahasa Indonesia (isi jujur: data yang disimpan, Supabase+RLS, analytics agregat,
       hak hapus, disclaimer medis), tertaut dari footer baru di `app/layout.js`.
       Kontak memakai `qcumberlarry@gmail.com` — ganti jika owner mau alamat lain.
+- [x] UX kecil dari temuan Fase 0 (2026-07-10): feedback hapus history pindah ke area
+      status level halaman (`notice` emerald + `error`), jadi tetap terlihat saat entri
+      terakhir dihapus dan kartu detail ikut hilang. Error hapus kini berbahasa
+      Indonesia, error mentah di-log. (Belum diuji ulang di browser dengan akun login —
+      butuh sesi login; tercakup di uji production oleh owner.)
 - [x] SEO dasar (2026-07-10): `metadata` per halaman (title template + layout wrapper
       untuk halaman client; history & reset-password noindex), root title mengangkat
       "Kalkulator BMI", Open Graph lengkap + OG image tergenerate

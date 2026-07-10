@@ -37,6 +37,7 @@ export default function HistoryPage() {
   const [items, setItems] = useState([]);
   const [status, setStatus] = useState("Memuat riwayat...");
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [selectedId, setSelectedId] = useState("");
   const [detailStatus, setDetailStatus] = useState("");
   const [detailError, setDetailError] = useState("");
@@ -151,6 +152,8 @@ export default function HistoryPage() {
   /**
    * Permanently removes a saved history entry for the current user, then keeps
    * the local list and selection in sync without needing a full refetch.
+   * Feedback goes to the page-level notice/error area so it stays visible
+   * even when the deleted entry was the last one (the detail card disappears).
    *
    * @param {string} id
    * @returns {Promise<void>}
@@ -165,6 +168,8 @@ export default function HistoryPage() {
     }
 
     try {
+      setError("");
+      setNotice("");
       setDetailError("");
       setDeletingId(id);
       const supabase = createSupabaseBrowserClient();
@@ -191,9 +196,10 @@ export default function HistoryPage() {
         setSelectedId(remaining[0]?.id ?? "");
       }
 
-      setDetailStatus("Riwayat berhasil dihapus.");
+      setNotice("Riwayat berhasil dihapus.");
     } catch (deleteError) {
-      setDetailError(deleteError.message || "Riwayat gagal dihapus.");
+      console.error("Gagal menghapus riwayat BMI:", deleteError);
+      setError("Riwayat gagal dihapus. Coba lagi beberapa saat.");
     } finally {
       setDeletingId("");
     }
@@ -257,6 +263,12 @@ export default function HistoryPage() {
       {status ? (
         <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
           {status}
+        </div>
+      ) : null}
+
+      {notice ? (
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+          {notice}
         </div>
       ) : null}
 
