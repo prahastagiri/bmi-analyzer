@@ -1,4 +1,4 @@
-# Roadmap: BMI Analyzer → Production & Freemium
+# Roadmap: HealthyMuch (dh. BMI Analyzer) → Production & Freemium
 
 Tujuan: membawa aplikasi dari "portfolio project di localhost" menjadi produk
 live yang stabil, lalu membangun nilai berulang yang layak dibayar, baru
@@ -47,7 +47,12 @@ alur auth+data terverifikasi manual.
 
 Aplikasi sudah live — fase ini memastikan yang live itu layak dipakai orang asing.
 
-> URL production: **https://bmi-analyzer-phi.vercel.app**
+> URL production: **https://healthymuch.prahastagiri.com** (rebrand 2026-07-10;
+> URL lama https://bmi-analyzer-phi.vercel.app tetap aktif sebagai domain Vercel
+> bawaan). Domain baru butuh aksi owner: (1) Vercel project → Settings → Domains
+> → tambah `healthymuch.prahastagiri.com`, (2) DNS `prahastagiri.com` → CNAME
+> `healthymuch` ke `cname.vercel-dns.com`, (3) Supabase → Auth → URL
+> Configuration → ganti Site URL ke domain baru.
 
 - [ ] Uji alur lengkap di URL production: register (termasuk email confirmation +
       redirect URL Supabase), login, simpan, history, hapus, export.
@@ -61,8 +66,9 @@ Aplikasi sudah live — fase ini memastikan yang live itu layak dipakai orang as
       `resetPasswordForEmail`) + `/reset-password` (form password baru, tangani link
       kedaluwarsa via hash error), link "Lupa password?" di login. Teruji lokal:
       kirim email sukses, state tanpa-sesi & link-kedaluwarsa tampil benar.
-      **Aksi owner:** tambahkan `https://bmi-analyzer-phi.vercel.app/reset-password`
-      dan `http://localhost:3210/reset-password` ke Supabase → Auth → URL
+      **Aksi owner:** tambahkan `https://healthymuch.prahastagiri.com/reset-password`,
+      `https://bmi-analyzer-phi.vercel.app/reset-password`, dan
+      `http://localhost:3210/reset-password` ke Supabase → Auth → URL
       Configuration → Redirect URLs, lalu klik link reset di inbox untuk uji
       end-to-end penggantian password.
 - [x] **Pemetaan pesan error Supabase → Indonesia** (2026-07-10) — `lib/auth-errors.js`

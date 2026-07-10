@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const alt =
-  "BMI Analyzer — Kalkulator BMI & kebutuhan nutrisi harian";
+  "HealthyMuch — Kalkulator BMI & kebutuhan nutrisi harian";
 
 export const size = {
   width: 1200,
@@ -42,7 +42,7 @@ export default async function Image() {
             letterSpacing: "-0.5px",
           }}
         >
-          BMI Analyzer
+          HealthyMuch
         </div>
         <div
           style={{

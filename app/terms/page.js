@@ -3,7 +3,7 @@ import Link from "next/link";
 export const metadata = {
   title: "Ketentuan Layanan",
   description:
-    "Ketentuan penggunaan BMI Analyzer: layanan gratis, batasan medis, dan tanggung jawab pengguna.",
+    "Ketentuan penggunaan HealthyMuch: layanan gratis, batasan medis, dan tanggung jawab pengguna.",
 };
 
 /**
@@ -27,7 +27,7 @@ export default function TermsPage() {
             Tentang layanan
           </h2>
           <p>
-            BMI Analyzer adalah kalkulator BMI dan kebutuhan nutrisi yang bisa
+            HealthyMuch adalah kalkulator BMI dan kebutuhan nutrisi yang bisa
             dipakai gratis. Fitur akun (menyimpan riwayat dan export hasil)
             juga gratis saat ini; jika suatu saat ada fitur berbayar, ketentuan
             ini akan diperbarui lebih dulu.

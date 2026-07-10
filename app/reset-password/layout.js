@@ -1,6 +1,6 @@
 export const metadata = {
   title: "Reset Password",
-  description: "Buat password baru untuk akun BMI Analyzer-mu.",
+  description: "Buat password baru untuk akun HealthyMuch-mu.",
   robots: { index: false },
 };
 

@@ -1,7 +1,7 @@
 export const metadata = {
   title: "Daftar",
   description:
-    "Buat akun BMI Analyzer gratis untuk menyimpan riwayat pengukuran dan export hasil analisis.",
+    "Buat akun HealthyMuch gratis untuk menyimpan riwayat pengukuran dan export hasil analisis.",
 };
 
 /**

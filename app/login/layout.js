@@ -1,7 +1,7 @@
 export const metadata = {
   title: "Login",
   description:
-    "Login ke akun BMI Analyzer untuk menyimpan hasil, membuka riwayat, dan export analisis.",
+    "Login ke akun HealthyMuch untuk menyimpan hasil, membuka riwayat, dan export analisis.",
 };
 
 /**

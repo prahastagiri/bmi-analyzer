@@ -1,6 +1,6 @@
 export const metadata = {
   title: "Lupa Password",
-  description: "Minta link reset password untuk akun BMI Analyzer-mu.",
+  description: "Minta link reset password untuk akun HealthyMuch-mu.",
 };
 
 /**

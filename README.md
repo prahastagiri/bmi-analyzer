@@ -1,4 +1,8 @@
-## BMI Analyzer
+## HealthyMuch
+
+> Sebelumnya bernama "BMI Analyzer" — rebrand 2026-07-10 mengikuti domain
+> production **https://healthymuch.prahastagiri.com**. Nama folder repo dan
+> tabel database tidak berubah.
 
 Aplikasi web untuk menghitung **BMI + analisis nutrisi dasar** (kalori, protein, lemak), dengan aturan produk:
 

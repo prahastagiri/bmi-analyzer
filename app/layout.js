@@ -19,17 +19,17 @@ const geistMono = Geist_Mono({
 export const metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Kalkulator BMI & Kebutuhan Nutrisi Harian — BMI Analyzer",
-    template: "%s — BMI Analyzer",
+    default: "Kalkulator BMI & Kebutuhan Nutrisi Harian — HealthyMuch",
+    template: "%s — HealthyMuch",
   },
   description:
     "Kalkulator BMI gratis: hitung BMI, berat badan ideal, dan kebutuhan kalori, protein, lemak, serta karbohidrat harianmu. Tanpa login, lengkap dengan riwayat dan export hasil.",
   openGraph: {
-    title: "Kalkulator BMI & Kebutuhan Nutrisi Harian — BMI Analyzer",
+    title: "Kalkulator BMI & Kebutuhan Nutrisi Harian — HealthyMuch",
     description:
       "Hitung BMI, berat badan ideal, dan kebutuhan nutrisi harianmu secara gratis, langsung tanpa login.",
     url: SITE_URL,
-    siteName: "BMI Analyzer",
+    siteName: "HealthyMuch",
     locale: "id_ID",
     type: "website",
   },
@@ -57,7 +57,7 @@ export default function RootLayout({ children }) {
             <footer className="border-t border-slate-200 bg-white">
               <div className="mx-auto flex w-full max-w-7xl flex-col gap-2 px-4 py-6 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6">
                 <p>
-                  BMI Analyzer — panduan umum, bukan pengganti konsultasi
+                  HealthyMuch — panduan umum, bukan pengganti konsultasi
                   medis.
                 </p>
                 <nav className="flex gap-4">

@@ -1,7 +1,7 @@
 # Programmer Guide
 
 ## Tujuan Dokumen
-Dokumen ini dibuat sebagai panduan kerja untuk programmer yang akan melanjutkan atau memodifikasi aplikasi `BMI Analyzer`.
+Dokumen ini dibuat sebagai panduan kerja untuk programmer yang akan melanjutkan atau memodifikasi aplikasi `HealthyMuch` (dh. `BMI Analyzer`).
 
 Fokus dokumen ini adalah:
 - menjelaskan alur aplikasi dari awal sampai akhir

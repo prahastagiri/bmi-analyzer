@@ -39,7 +39,7 @@ export function AppHeader() {
             <ActivitySquare className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-950">BMI Analyzer</p>
+            <p className="text-sm font-semibold text-slate-950">HealthyMuch</p>
             <p className="text-xs text-slate-500">
               Hitung BMI, nutrisi, dan simpan hasilmu
             </p>
