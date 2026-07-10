@@ -70,8 +70,10 @@ Aplikasi sudah live — fase ini memastikan yang live itu layak dipakai orang as
       diverifikasi lokal. Status hijau di GitHub baru terbukti setelah push berikutnya.
 - [ ] Error monitoring (Sentry free tier) — tanpa ini, bug pengguna tidak akan pernah
       kamu ketahui.
-- [ ] Analytics ringan (Vercel Analytics cukup) — angka pengunjung adalah dasar semua
-      keputusan monetisasi nanti.
+- [x] Analytics ringan (2026-07-10): `@vercel/analytics` terpasang, `<Analytics />` di
+      `app/layout.js`. Terverifikasi lokal (debug mode mencatat pageview tanpa error).
+      **Aksi owner:** aktifkan toggle Analytics di dashboard Vercel project ini —
+      tanpa itu data production tidak terkumpul.
 - [ ] Halaman privacy policy + terms sederhana (prasyarat kepercayaan, AdSense, dan
       pemrosesan data kesehatan).
 - [ ] SEO dasar: `metadata` per halaman, OG image, sitemap. Kata kunci "kalkulator BMI"

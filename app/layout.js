@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AppHeader } from "@/components/app-header";
@@ -40,6 +41,7 @@ export default function RootLayout({ children }) {
             <main className="flex-1">{children}</main>
           </div>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
