@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/components/auth-provider";
 import { BmiResult } from "@/components/bmi/BmiResult";
+import { BmiTrendChart } from "@/components/bmi/BmiTrendChart";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -271,6 +272,8 @@ export default function HistoryPage() {
           {notice}
         </div>
       ) : null}
+
+      {!status && items.length > 0 ? <BmiTrendChart items={items} /> : null}
 
       {selectedItem && selectedResult && categoryContent ? (
         <Card className="overflow-hidden border-sky-100 shadow-lg shadow-sky-100/30">
