@@ -9,7 +9,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { BmiFormulaSection } from "@/components/bmi/BmiFormulaSection";
-import { buildSummary, getActivityLabel } from "@/lib/explanations";
+import { estimateTimeToTarget } from "@/lib/calculations";
+import {
+  buildSummary,
+  formatTargetDuration,
+  getActivityLabel,
+} from "@/lib/explanations";
 import { formatNumber } from "@/lib/utils";
 
 const badgeVariantByCategory = {
@@ -26,11 +31,15 @@ const badgeVariantByCategory = {
  * @param {{
  *   categoryContent: { label: string, summary: string, tips: string[] } | null,
  *   result: import("@/lib/calculations").AnalysisResult | null,
- *   resultRef: import("react").RefObject<HTMLDivElement | null>
+ *   resultRef: import("react").RefObject<HTMLDivElement | null>,
+ *   targetWeightKg?: number
  * }} props
  * @returns {import("react").JSX.Element}
  */
-export function BmiResult({ categoryContent, result, resultRef }) {
+export function BmiResult({ categoryContent, result, resultRef, targetWeightKg }) {
+  const estimate = result
+    ? estimateTimeToTarget(result, targetWeightKg)
+    : null;
   return (
     <div ref={resultRef}>
       <Card className="overflow-hidden shadow-lg shadow-slate-200/70">
@@ -100,6 +109,14 @@ export function BmiResult({ categoryContent, result, resultRef }) {
                 </p>
               </div>
 
+              {estimate ? (
+                <TargetEstimate
+                  estimate={estimate}
+                  result={result}
+                  isOverride={Boolean(targetWeightKg)}
+                />
+              ) : null}
+
               <div className="rounded-2xl border border-sky-100 bg-sky-50 p-4">
                 <h3 className="font-semibold text-slate-950">
                   Tips untuk langkah berikutnya
@@ -129,6 +146,90 @@ export function BmiResult({ categoryContent, result, resultRef }) {
           )}
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+/**
+ * Shows the projected time to reach the target weight, or a friendly
+ * explanation when no timeline applies (already in range, calories at
+ * maintenance, or a plan that pushes the opposite direction).
+ *
+ * @param {{
+ *   estimate: import("@/lib/calculations").TargetEstimate,
+ *   result: import("@/lib/calculations").AnalysisResult,
+ *   isOverride: boolean
+ * }} props
+ * @returns {import("react").JSX.Element}
+ */
+function TargetEstimate({ estimate, result, isOverride }) {
+  if (estimate.status === "in_range") {
+    return (
+      <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+        <h3 className="font-semibold text-slate-950">Estimasi menuju target</h3>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          {isOverride
+            ? "Beratmu sudah berada di target yang kamu tetapkan. Fokus menjaga pola makan dan aktivitas agar tetap stabil."
+            : "Beratmu sudah berada di zona BMI sehat. Fokus mempertahankannya lewat pola makan dan aktivitas yang konsisten."}
+        </p>
+      </div>
+    );
+  }
+
+  if (estimate.status === "no_timeline") {
+    return (
+      <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4">
+        <h3 className="font-semibold text-slate-950">Estimasi menuju target</h3>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          Kalori harianmu saat ini setara kebutuhan pemeliharaan, jadi berat
+          cenderung stabil. Sesuaikan target kalori bila ingin menaikkan atau
+          menurunkan berat menuju{" "}
+          <span className="font-semibold text-slate-950">
+            {formatNumber(estimate.targetWeightKg)} kg
+          </span>
+          .
+        </p>
+      </div>
+    );
+  }
+
+  if (estimate.status === "direction_mismatch") {
+    const wantsToLose = estimate.targetWeightKg < result.weightKg;
+
+    return (
+      <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4">
+        <h3 className="font-semibold text-slate-950">Estimasi menuju target</h3>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          Target beratmu ({formatNumber(estimate.targetWeightKg)} kg) mengarah ke{" "}
+          {wantsToLose ? "penurunan" : "kenaikan"} berat, tetapi kalori harianmu
+          saat ini justru {wantsToLose ? "di atas" : "di bawah"} kebutuhan
+          pemeliharaan. Sesuaikan asupan agar sejalan dengan target.
+        </p>
+      </div>
+    );
+  }
+
+  const verb = estimate.direction === "lose" ? "menurunkan" : "menaikkan";
+  const absDelta = Math.abs(estimate.weightDeltaKg);
+
+  return (
+    <div className="rounded-2xl border border-sky-100 bg-white p-4">
+      <h3 className="font-semibold text-slate-950">Estimasi menuju target</h3>
+      <p className="mt-2 text-sm leading-6 text-slate-600">
+        Dengan pola kalori ini, perkiraan{" "}
+        <span className="font-semibold text-slate-950">
+          {formatTargetDuration(estimate.weeks)}
+        </span>{" "}
+        untuk {verb} berat dari {formatNumber(result.weightKg)} kg ke{" "}
+        <span className="font-semibold text-slate-950">
+          {formatNumber(estimate.targetWeightKg)} kg
+        </span>{" "}
+        (sekitar {formatNumber(absDelta)} kg).
+      </p>
+      <p className="mt-2 text-xs leading-5 text-slate-500">
+        Estimasi kasar berbasis 7.700 kkal/kg dan mengasumsikan pola kalori
+        dijaga konsisten. Perubahan berat nyata bisa berbeda.
+      </p>
     </div>
   );
 }
