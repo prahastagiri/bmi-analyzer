@@ -237,13 +237,42 @@ export function useBmiAnalyzer() {
 
     try {
       setActionError("");
-      setActionStatus("Menyimpan hasil ke akunmu...");
-      setBusyAction("save");
       const supabase = createSupabaseBrowserClient();
 
       if (!supabase) {
         throw new Error("Supabase client tidak tersedia.");
       }
+
+      // Cegah duplikat wajar: jika sudah ada entri hari ini, minta konfirmasi
+      // sebelum menyimpan lagi (mencegah simpan ganda tak sengaja).
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0);
+
+      const { data: todaysEntries, error: dupError } = await supabase
+        .from("bmi_histories")
+        .select("id")
+        .eq("user_id", user.id)
+        .gte("created_at", startOfToday.toISOString())
+        .limit(1);
+
+      if (dupError) {
+        throw dupError;
+      }
+
+      if (
+        todaysEntries &&
+        todaysEntries.length > 0 &&
+        typeof window !== "undefined" &&
+        !window.confirm(
+          "Kamu sudah menyimpan hasil hari ini. Simpan lagi sebagai entri baru?"
+        )
+      ) {
+        setActionStatus("");
+        return;
+      }
+
+      setActionStatus("Menyimpan hasil ke akunmu...");
+      setBusyAction("save");
 
       const { error: insertError } = await supabase.from("bmi_histories").insert({
         user_id: user.id,
