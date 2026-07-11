@@ -139,18 +139,39 @@ error masuk ke Sentry, pengunjung terhitung, CI hijau.
 Ini fase yang menciptakan alasan orang **kembali** — prasyarat mutlak freemium.
 Tanpa fase ini tidak ada yang layak dibayar.
 
-- [ ] Grafik tren berat & BMI di halaman history (SVG sendiri, tanpa library baru),
-      dengan pita zona BMI normal 18,5–24,9. Empty state mengajak mengukur rutin.
-- [ ] Estimasi waktu ke berat target di kartu hasil (rumus 7.700 kkal/kg; pakai defisit
-      efektif `maintenanceCalories − dailyCalories`, bukan `calorieAdjustment` mentah;
-      target = batas range normal terdekat; kategori normal → tampilkan "sudah di range").
-- [ ] Tabel `profiles`: nama tampilan + target berat pribadi (opsional, override target default).
-- [ ] Edit-tanggal tidak perlu — tapi cegah duplikat wajar: konfirmasi jika menyimpan
-      dua kali dalam hari yang sama.
-- [ ] Unit test untuk semua rumus baru.
+- [x] Grafik tren berat & BMI di halaman history (2026-07-11): `components/bmi/
+      BmiTrendChart.js` — SVG mandiri tanpa library, toggle BMI/Berat, pita zona BMI
+      normal 18,5–24,9 (dan zona berat sehat untuk mode berat, dari tinggi terakhir),
+      empty state <3 data mengajak mengukur rutin. Terverifikasi via DOM (path, band,
+      toggle) dengan data contoh.
+- [x] Estimasi waktu ke berat target di kartu hasil (2026-07-11): `estimateTimeToTarget`
+      di `lib/calculations.js` — defisit efektif `dailyCalories − maintenanceCalories`,
+      7.700 kkal/kg, target = batas range normal terdekat. Status in_range/no_timeline/
+      direction_mismatch + override target pribadi. Tampil di kartu hasil (kalkulator &
+      detail history). Unit test lengkap; terverifikasi live (overweight → "sekitar N
+      bulan menurunkan berat ...").
+- [x] Tabel `profiles` (2026-07-11): nama tampilan + target berat pribadi opsional
+      (override target default). Schema + RLS di `supabase/schema.sql`, editor
+      `components/bmi/ProfileCard.js` di history, helper `lib/profile.js`. Render +
+      validasi terverifikasi via DOM. **Aksi owner: jalankan ulang seluruh
+      `supabase/schema.sql` di SQL Editor Supabase production** (menambah tabel
+      `profiles` + policy) — sebelum itu fitur profil tampil tapi simpan/muat gagal
+      (ditangani gracefully, app tidak rusak).
+- [x] Cegah duplikat wajar (2026-07-11): konfirmasi (`window.confirm`) jika sudah ada
+      entri hari ini sebelum menyimpan lagi — di `handleSave` (useBmiAnalyzer).
+- [x] Unit test untuk semua rumus baru (2026-07-11): estimateTimeToTarget (7 kasus).
+      Total suite 22 tes hijau.
 
 **Definition of Done:** pengguna yang menyimpan ≥3 hasil melihat grafik progres dan
 proyeksi waktu ke target; kamu sendiri memakai aplikasi ini tiap minggu.
+
+> Status 2026-07-11: SEMUA KODE FASE 2 SELESAI, test+lint+build hijau, di-commit.
+> **Belum di-push & belum migrasi DB.** Prasyarat penutupan Fase 2: (1) owner
+> jalankan `supabase/schema.sql` (tabel profiles), (2) push, (3) uji end-to-end di
+> production — simpan ≥3 hasil, lihat grafik tren + estimasi, set target pribadi,
+> uji konfirmasi duplikat harian. Setelah itu tandai ✅ FASE 2 SELESAI.
+> Catatan: sebelum Fase 3 (entitlement/pembayaran), migrasi bertahap JS → TS dulu
+> (lihat Keputusan Tech Stack).
 
 ---
 
