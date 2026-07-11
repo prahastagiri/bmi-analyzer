@@ -18,6 +18,7 @@ import {
 } from "@/lib/calculations";
 import { getCategoryContent } from "@/lib/explanations";
 import { exportElementAs } from "@/lib/export";
+import { fetchProfile } from "@/lib/profile";
 import {
   createSupabaseBrowserClient,
   hasSupabaseEnv,
@@ -59,6 +60,7 @@ const initialForm = {
  *   result: import("@/lib/calculations").AnalysisResult | null,
  *   resultRef: import("react").RefObject<HTMLDivElement | null>,
  *   status: string,
+ *   targetWeightKg: number | null,
  *   updateField: (field: "heightCm" | "weightKg" | "age" | "gender" | "activityLevel", value: string) => void
  * }}
  */
@@ -79,6 +81,7 @@ export function useBmiAnalyzer() {
   const [actionStatus, setActionStatus] = useState("");
   const [busyAction, setBusyAction] = useState("");
   const [pendingAction, setPendingAction] = useState("");
+  const [targetWeightKg, setTargetWeightKg] = useState(null);
 
   const categoryContent = useMemo(
     () => (result ? getCategoryContent(result.bmiCategory) : null),
@@ -123,6 +126,30 @@ export function useBmiAnalyzer() {
       result,
     });
   }, [form, result]);
+
+  useEffect(() => {
+    let active = true;
+
+    // Logged-out resolves to null so the target resets between sessions; the
+    // setState always runs in a Promise callback, never synchronously here.
+    const load =
+      authEnabled && user ? fetchProfile(user.id) : Promise.resolve(null);
+
+    load
+      .then((profile) => {
+        if (active) {
+          setTargetWeightKg(profile?.target_weight_kg ?? null);
+        }
+      })
+      .catch((profileError) => {
+        // A missing/failed profile just means the estimate uses its default.
+        console.error("Gagal memuat target profil:", profileError);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [authEnabled, user]);
 
   /**
    * Updates a single field in the calculator form without replacing the full
@@ -358,6 +385,7 @@ export function useBmiAnalyzer() {
     resultRef,
     registerHref,
     status,
+    targetWeightKg,
     updateField,
   };
 }

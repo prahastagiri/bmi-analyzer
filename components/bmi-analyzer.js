@@ -31,6 +31,7 @@ export function BmiAnalyzer() {
     resultRef,
     registerHref,
     status,
+    targetWeightKg,
     updateField,
   } = useBmiAnalyzer();
 
@@ -51,6 +52,7 @@ export function BmiAnalyzer() {
           categoryContent={categoryContent}
           result={result}
           resultRef={resultRef}
+          targetWeightKg={targetWeightKg ?? undefined}
         />
         <BmiActions
           actionError={actionError}

@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth-provider";
 import { BmiResult } from "@/components/bmi/BmiResult";
 import { BmiTrendChart } from "@/components/bmi/BmiTrendChart";
+import { ProfileCard } from "@/components/bmi/ProfileCard";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -21,6 +22,7 @@ import { calculateAnalysis } from "@/lib/calculations";
 import { getCategoryContent, getActivityLabel } from "@/lib/explanations";
 import { clearContinuationIntent, writePersistedCalculatorState } from "@/lib/bmi-session";
 import { exportElementAs } from "@/lib/export";
+import { fetchProfile } from "@/lib/profile";
 import {
   createSupabaseBrowserClient,
   mapHistoryRecordToCalculatorInput,
@@ -43,6 +45,7 @@ export default function HistoryPage() {
   const [detailStatus, setDetailStatus] = useState("");
   const [detailError, setDetailError] = useState("");
   const [deletingId, setDeletingId] = useState("");
+  const [profile, setProfile] = useState(null);
   const detailRef = useRef(null);
 
   useEffect(() => {
@@ -84,6 +87,25 @@ export default function HistoryPage() {
 
     if (!loading) {
       loadHistory();
+    }
+  }, [authEnabled, loading, user]);
+
+  useEffect(() => {
+    async function loadProfile() {
+      if (!authEnabled || !user) {
+        return;
+      }
+
+      try {
+        setProfile(await fetchProfile(user.id));
+      } catch (profileError) {
+        // A missing profile is not fatal — the page still works with defaults.
+        console.error("Gagal memuat profil:", profileError);
+      }
+    }
+
+    if (!loading) {
+      loadProfile();
     }
   }, [authEnabled, loading, user]);
 
@@ -248,12 +270,22 @@ export default function HistoryPage() {
           Riwayat akun
         </p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
-          Hasil BMI yang pernah kamu simpan
+          {profile?.display_name
+            ? `Progres ${profile.display_name}`
+            : "Hasil BMI yang pernah kamu simpan"}
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
           Halaman ini menampilkan semua hasil BMI yang tersimpan di akunmu.
         </p>
       </div>
+
+      {user ? (
+        <ProfileCard
+          userId={user.id}
+          initialProfile={profile}
+          onSaved={setProfile}
+        />
+      ) : null}
 
       {error ? (
         <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
@@ -346,6 +378,7 @@ export default function HistoryPage() {
               categoryContent={categoryContent}
               result={selectedResult}
               resultRef={detailRef}
+              targetWeightKg={profile?.target_weight_kg ?? undefined}
             />
           </CardContent>
         </Card>

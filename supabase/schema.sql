@@ -48,3 +48,38 @@ create policy "Users can delete own bmi histories"
 on public.bmi_histories
 for delete
 using (auth.uid() = user_id);
+
+-- =====================================================================
+-- Fase 2: profil pengguna (nama tampilan + target berat pribadi opsional).
+-- Satu baris per user (id = auth.users.id). target_weight_kg boleh NULL —
+-- artinya pakai target default (batas zona BMI normal terdekat).
+-- =====================================================================
+create table if not exists public.profiles (
+  id uuid primary key references auth.users (id) on delete cascade,
+  display_name text,
+  target_weight_kg numeric check (target_weight_kg is null or target_weight_kg > 0),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.profiles enable row level security;
+
+drop policy if exists "Users can read own profile" on public.profiles;
+create policy "Users can read own profile"
+on public.profiles
+for select
+using (auth.uid() = id);
+
+drop policy if exists "Users can insert own profile" on public.profiles;
+create policy "Users can insert own profile"
+on public.profiles
+for insert
+with check (auth.uid() = id);
+
+-- UPDATE dibutuhkan agar upsert (INSERT ... ON CONFLICT UPDATE) dari client
+-- bisa memperbarui baris profil yang sudah ada.
+drop policy if exists "Users can update own profile" on public.profiles;
+create policy "Users can update own profile"
+on public.profiles
+for update
+using (auth.uid() = id)
+with check (auth.uid() = id);
