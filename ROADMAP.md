@@ -165,13 +165,13 @@ Tanpa fase ini tidak ada yang layak dibayar.
 **Definition of Done:** pengguna yang menyimpan ≥3 hasil melihat grafik progres dan
 proyeksi waktu ke target; kamu sendiri memakai aplikasi ini tiap minggu.
 
-> Status 2026-07-11: SEMUA KODE FASE 2 SELESAI, test+lint+build hijau, di-commit.
-> **Belum di-push & belum migrasi DB.** Prasyarat penutupan Fase 2: (1) owner
-> jalankan `supabase/schema.sql` (tabel profiles), (2) push, (3) uji end-to-end di
-> production — simpan ≥3 hasil, lihat grafik tren + estimasi, set target pribadi,
-> uji konfirmasi duplikat harian. Setelah itu tandai ✅ FASE 2 SELESAI.
-> Catatan: sebelum Fase 3 (entitlement/pembayaran), migrasi bertahap JS → TS dulu
-> (lihat Keputusan Tech Stack).
+> ✅ **FASE 2 SELESAI (2026-07-13).** Migrasi DB (tabel `profiles` + RLS)
+> dijalankan owner di Supabase SQL Editor, kode di-push ke production, uji
+> end-to-end LULUS oleh owner: grafik tren tampil, estimasi target tampil, profil
+> (nama + target pribadi) tersimpan, konfirmasi duplikat harian muncul, history
+> lengkap. Definition of Done terpenuhi. Catatan: sebelum Fase 3
+> (entitlement/pembayaran), migrasi bertahap JS → TS dulu (lihat Keputusan
+> Tech Stack).
 
 ---
 
