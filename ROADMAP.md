@@ -245,10 +245,12 @@ sudah jalan adalah risiko terbesar.
 - **Supabase** — tetap. Auth + Postgres + RLS + free tier paling cocok untuk freemium.
   Catatan arsitektur: mulai Fase 3, enforcement entitlement & webhook wajib server-side
   (route handler), bukan hanya client.
-- **Satu perubahan yang disetujui: migrasi bertahap JS → TypeScript.** Dilakukan
-  setelah Fase 1 (app live), selesai sebelum Fase 3 (sebelum kode entitlement/
-  pembayaran ditulis). Alasan: kesalahan tipe di kode billing/entitlement berdampak
-  uang. Migrasi incremental — TS/JS berdampingan, app selalu deployable.
+- **Migrasi JS → TypeScript — ✅ SELESAI (2026-07-21).** Seluruh kode (46 file:
+  lib, komponen UI + BMI, hook, semua halaman app, config Sentry/instrumentation/
+  vitest) dimigrasikan ke `.ts`/`.tsx`. Tidak ada file `.js` tersisa (hanya
+  `.mjs` config). `tsconfig.json` strict; `tsc --noEmit` bersih, 22 tes hijau,
+  lint & build hijau. Belum di-push. Alasan migrasi: kesalahan tipe di kode
+  billing/entitlement (Fase 3+) berdampak uang. Sekarang siap masuk Fase 3.
 
 ---
 
