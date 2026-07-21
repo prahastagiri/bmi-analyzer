@@ -4,8 +4,15 @@ export interface Profile {
   id: string;
   display_name: string | null;
   target_weight_kg: number | null;
+  /** Tier langganan. Default 'free' di DB. Lihat lib/tiers.ts. */
+  plan: "free" | "premium";
+  /** Kapan premium berakhir; null = tanpa batas (atau tidak relevan untuk free). */
+  valid_until: string | null;
   updated_at?: string;
 }
+
+/** Kolom profil yang selalu diambil, termasuk field entitlement (Fase 3). */
+const PROFILE_COLUMNS = "id, display_name, target_weight_kg, plan, valid_until";
 
 export async function fetchProfile(userId: string): Promise<Profile | null> {
   const supabase = createSupabaseBrowserClient();
@@ -16,7 +23,7 @@ export async function fetchProfile(userId: string): Promise<Profile | null> {
 
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, display_name, target_weight_kg")
+    .select(PROFILE_COLUMNS)
     .eq("id", userId)
     .maybeSingle();
 
@@ -50,7 +57,7 @@ export async function saveProfile(
   const { data, error } = await supabase
     .from("profiles")
     .upsert(payload)
-    .select("id, display_name, target_weight_kg")
+    .select(PROFILE_COLUMNS)
     .single();
 
   if (error) {
