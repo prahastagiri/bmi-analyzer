@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { calculateIdealWeightRange } from "@/lib/calculations";
+import { FREE_CHART_DAYS } from "@/lib/tiers";
 import { formatNumber, formatShortDate } from "@/lib/utils";
 
 const WIDTH = 640;
@@ -58,14 +60,18 @@ interface ChartGeometry {
 
 interface BmiTrendChartProps {
   items: TrendItem[];
+  premium?: boolean;
 }
 
-export function BmiTrendChart({ items }: BmiTrendChartProps) {
+export function BmiTrendChart({ items, premium = false }: BmiTrendChartProps) {
   const [metric, setMetric] = useState<"bmi" | "weight">("bmi");
 
-  // Oldest -> newest so the line reads left-to-right in time order.
+  // Oldest -> newest so the line reads left-to-right in time order. Pengguna
+  // free hanya melihat jendela FREE_CHART_DAYS terakhir; premium melihat semua.
+  // Jendela dihitung relatif ke entri TERBARU (bukan Date.now()) agar memo tetap
+  // murni & deterministik terhadap data.
   const points = useMemo(() => {
-    return [...(items ?? [])]
+    const parsed = [...(items ?? [])]
       .map((item) => ({
         time: new Date(item.created_at).getTime(),
         weight: Number(item.weight_kg),
@@ -79,7 +85,16 @@ export function BmiTrendChart({ items }: BmiTrendChartProps) {
           Number.isFinite(point.bmi)
       )
       .sort((a, b) => a.time - b.time);
-  }, [items]);
+
+    if (premium || parsed.length === 0) {
+      return parsed;
+    }
+
+    const latestTime = parsed[parsed.length - 1].time;
+    const cutoff = latestTime - FREE_CHART_DAYS * 24 * 60 * 60 * 1000;
+
+    return parsed.filter((point) => point.time >= cutoff);
+  }, [items, premium]);
 
   const enoughData = points.length >= MIN_POINTS;
 
@@ -328,6 +343,17 @@ export function BmiTrendChart({ items }: BmiTrendChartProps) {
                   : "Zona berat sehat"}
               </span>
             </figcaption>
+            {!premium ? (
+              <p className="text-xs text-slate-500">
+                Menampilkan {FREE_CHART_DAYS} hari terakhir.{" "}
+                <Link
+                  href="/upgrade"
+                  className="font-semibold text-amber-700 hover:underline"
+                >
+                  Upgrade untuk grafik penuh →
+                </Link>
+              </p>
+            ) : null}
           </figure>
         ) : (
           <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-5 py-10 text-center">

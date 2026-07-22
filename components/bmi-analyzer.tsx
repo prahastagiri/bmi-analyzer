@@ -20,6 +20,7 @@ export function BmiAnalyzer() {
     handleSave,
     loginHref,
     pendingAction,
+    premium,
     result,
     resultRef,
     registerHref,
@@ -43,6 +44,7 @@ export function BmiAnalyzer() {
       <div className="space-y-6">
         <BmiResult
           categoryContent={categoryContent}
+          premium={premium}
           result={result}
           resultRef={resultRef}
           targetWeightKg={targetWeightKg ?? undefined}
@@ -56,6 +58,7 @@ export function BmiAnalyzer() {
           onExport={handleExport}
           onSave={handleSave}
           pendingAction={pendingAction}
+          premium={premium}
           registerHref={registerHref}
         />
       </div>

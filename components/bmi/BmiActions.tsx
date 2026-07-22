@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Download, Loader2, LogIn, Save } from "lucide-react";
+import { Download, Loader2, Lock, LogIn, Save, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +21,7 @@ interface BmiActionsProps {
   onExport: (type: "jpg" | "pdf") => void;
   onSave: () => void;
   pendingAction: string;
+  premium: boolean;
   registerHref: string;
 }
 
@@ -33,9 +34,27 @@ export function BmiActions({
   onExport,
   onSave,
   pendingAction,
+  premium,
   registerHref,
 }: BmiActionsProps) {
   const isBusy = Boolean(busyAction);
+  // Ikon export mengunci saat free; klik tetap menampilkan ajakan upgrade.
+  const jpgIcon =
+    busyAction === "jpg" ? (
+      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+    ) : premium ? (
+      <Download className="mr-2 h-4 w-4" />
+    ) : (
+      <Lock className="mr-2 h-4 w-4" />
+    );
+  const pdfIcon =
+    busyAction === "pdf" ? (
+      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+    ) : premium ? (
+      <Download className="mr-2 h-4 w-4" />
+    ) : (
+      <Lock className="mr-2 h-4 w-4" />
+    );
 
   return (
     <Card>
@@ -60,11 +79,7 @@ export function BmiActions({
             onClick={() => onExport("jpg")}
             disabled={!hasResult || isBusy}
           >
-            {busyAction === "jpg" ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Download className="mr-2 h-4 w-4" />
-            )}
+            {jpgIcon}
             {busyAction === "jpg" ? "Menyiapkan JPG..." : "Export JPG"}
           </Button>
           <Button
@@ -72,14 +87,20 @@ export function BmiActions({
             onClick={() => onExport("pdf")}
             disabled={!hasResult || isBusy}
           >
-            {busyAction === "pdf" ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Download className="mr-2 h-4 w-4" />
-            )}
+            {pdfIcon}
             {busyAction === "pdf" ? "Menyiapkan PDF..." : "Export PDF"}
           </Button>
         </div>
+
+        {!premium ? (
+          <Link
+            href="/upgrade"
+            className="flex items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 transition-colors hover:bg-amber-100"
+          >
+            <Sparkles className="h-4 w-4 shrink-0" />
+            Export JPG/PDF & estimasi target adalah fitur premium. Lihat premium →
+          </Link>
+        ) : null}
 
         {actionError ? (
           <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">

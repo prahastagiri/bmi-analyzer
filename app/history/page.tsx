@@ -32,6 +32,7 @@ import {
   mapHistoryRecordToCalculatorInput,
 } from "@/lib/supabase";
 import type { BmiHistoryRecord } from "@/lib/supabase";
+import { isPremium } from "@/lib/tiers";
 import { cn, formatCompactDate, formatNumber } from "@/lib/utils";
 
 export default function HistoryPage() {
@@ -47,6 +48,7 @@ export default function HistoryPage() {
   const [deletingId, setDeletingId] = useState("");
   const [profile, setProfile] = useState<Profile | null>(null);
   const detailRef = useRef<HTMLDivElement>(null);
+  const premium = isPremium(profile);
 
   useEffect(() => {
     async function loadHistory() {
@@ -137,6 +139,14 @@ export default function HistoryPage() {
   async function handleDetailExport(type: "jpg" | "pdf") {
     if (!selectedResult) {
       setDetailError("Pilih history yang ingin diexport terlebih dahulu.");
+      return;
+    }
+
+    if (!premium) {
+      setDetailStatus("");
+      setDetailError(
+        "Export JPG & PDF adalah fitur premium. Buka halaman upgrade untuk mengaktifkannya."
+      );
       return;
     }
 
@@ -291,7 +301,9 @@ export default function HistoryPage() {
         </div>
       ) : null}
 
-      {!status && items.length > 0 ? <BmiTrendChart items={items} /> : null}
+      {!status && items.length > 0 ? (
+        <BmiTrendChart items={items} premium={premium} />
+      ) : null}
 
       {selectedItem && selectedResult && categoryContent ? (
         <Card className="overflow-hidden border-sky-100 shadow-lg shadow-sky-100/30">
@@ -362,6 +374,7 @@ export default function HistoryPage() {
 
             <BmiResult
               categoryContent={categoryContent}
+              premium={premium}
               result={selectedResult}
               resultRef={detailRef}
               targetWeightKg={profile?.target_weight_kg ?? undefined}

@@ -20,7 +20,8 @@ import {
 } from "@/lib/calculations";
 import { getCategoryContent } from "@/lib/explanations";
 import { exportElementAs } from "@/lib/export";
-import { fetchProfile } from "@/lib/profile";
+import { fetchProfile, type Profile } from "@/lib/profile";
+import { FREE_SAVE_LIMIT, isPremium } from "@/lib/tiers";
 import {
   createSupabaseBrowserClient,
   hasSupabaseEnv,
@@ -59,6 +60,7 @@ interface UseBmiAnalyzerReturn {
   handleSave: () => Promise<void>;
   loginHref: string;
   pendingAction: string;
+  premium: boolean;
   result: AnalysisResult | null;
   resultRef: RefObject<HTMLDivElement | null>;
   registerHref: string;
@@ -92,7 +94,10 @@ export function useBmiAnalyzer(): UseBmiAnalyzerReturn {
   const [actionStatus, setActionStatus] = useState("");
   const [busyAction, setBusyAction] = useState<BusyAction>("");
   const [pendingAction, setPendingAction] = useState<"" | "save" | "export">("");
-  const [targetWeightKg, setTargetWeightKg] = useState<number | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+
+  const targetWeightKg = profile?.target_weight_kg ?? null;
+  const premium = isPremium(profile);
 
   const categoryContent = useMemo(
     () => (result ? getCategoryContent(result.bmiCategory) : null),
@@ -141,20 +146,20 @@ export function useBmiAnalyzer(): UseBmiAnalyzerReturn {
   useEffect(() => {
     let active = true;
 
-    // Logged-out resolves to null so the target resets between sessions; the
+    // Logged-out resolves to null so target & tier reset between sessions; the
     // setState always runs in a Promise callback, never synchronously here.
     const load =
       authEnabled && user ? fetchProfile(user.id) : Promise.resolve(null);
 
     load
-      .then((profile) => {
+      .then((loaded) => {
         if (active) {
-          setTargetWeightKg(profile?.target_weight_kg ?? null);
+          setProfile(loaded);
         }
       })
       .catch((profileError) => {
-        // A missing/failed profile just means the estimate uses its default.
-        console.error("Gagal memuat target profil:", profileError);
+        // A missing/failed profile just means default target + free tier.
+        console.error("Gagal memuat profil:", profileError);
       });
 
     return () => {
@@ -279,9 +284,23 @@ export function useBmiAnalyzer(): UseBmiAnalyzerReturn {
       setActionStatus("Hasil berhasil disimpan. Lihat di halaman riwayat kapan saja.");
     } catch (saveError) {
       console.error("Gagal menyimpan hasil BMI:", saveError);
-      setActionError(
-        "Hasil gagal disimpan. Coba lagi beberapa saat lagi — jika masih gagal, muat ulang halaman."
-      );
+
+      // Backstop batas free (trigger DB) — tampilkan ajakan upgrade, bukan
+      // pesan gagal generik.
+      const message =
+        saveError && typeof saveError === "object" && "message" in saveError
+          ? String((saveError as { message: unknown }).message)
+          : "";
+
+      if (message.includes("FREE_SAVE_LIMIT_REACHED")) {
+        setActionError(
+          `Batas ${FREE_SAVE_LIMIT} hasil tersimpan untuk akun free sudah tercapai. Hapus salah satu hasil lama, atau upgrade ke premium untuk riwayat tanpa batas.`
+        );
+      } else {
+        setActionError(
+          "Hasil gagal disimpan. Coba lagi beberapa saat lagi — jika masih gagal, muat ulang halaman."
+        );
+      }
       setActionStatus("");
     } finally {
       setBusyAction("");
@@ -311,6 +330,16 @@ export function useBmiAnalyzer(): UseBmiAnalyzerReturn {
       });
       setActionStatus("");
       setActionError("Login diperlukan untuk export hasil ke JPG atau PDF.");
+      return;
+    }
+
+    // Export adalah fitur premium. Free diarahkan ke /upgrade (BmiActions
+    // menampilkan tautannya saat premium=false).
+    if (!premium) {
+      setActionStatus("");
+      setActionError(
+        "Export JPG & PDF adalah fitur premium. Upgrade untuk membukanya."
+      );
       return;
     }
 
@@ -396,6 +425,7 @@ export function useBmiAnalyzer(): UseBmiAnalyzerReturn {
     handleSave,
     loginHref,
     pendingAction,
+    premium,
     result,
     resultRef,
     registerHref,

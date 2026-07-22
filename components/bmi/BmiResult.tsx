@@ -10,6 +10,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Link from "next/link";
+import { Sparkles } from "lucide-react";
+
 import { BmiFormulaSection } from "@/components/bmi/BmiFormulaSection";
 import type { AnalysisResult, TargetEstimate } from "@/lib/calculations";
 import { estimateTimeToTarget } from "@/lib/calculations";
@@ -38,12 +41,19 @@ interface CategoryContent {
 
 interface BmiResultProps {
   categoryContent: CategoryContent | null;
+  premium?: boolean;
   result: AnalysisResult | null;
   resultRef: RefObject<HTMLDivElement | null>;
   targetWeightKg?: number;
 }
 
-export function BmiResult({ categoryContent, result, resultRef, targetWeightKg }: BmiResultProps) {
+export function BmiResult({
+  categoryContent,
+  premium = false,
+  result,
+  resultRef,
+  targetWeightKg,
+}: BmiResultProps) {
   const estimate = result
     ? estimateTimeToTarget(result, targetWeightKg)
     : null;
@@ -116,13 +126,15 @@ export function BmiResult({ categoryContent, result, resultRef, targetWeightKg }
                 </p>
               </div>
 
-              {estimate ? (
+              {estimate && premium ? (
                 <TargetEstimateSection
                   estimate={estimate}
                   result={result}
                   isOverride={Boolean(targetWeightKg)}
                 />
               ) : null}
+
+              {estimate && !premium ? <TargetEstimateLocked /> : null}
 
               <div className="rounded-2xl border border-sky-100 bg-sky-50 p-4">
                 <h3 className="font-semibold text-slate-950">
@@ -232,6 +244,30 @@ function TargetEstimateSection({ estimate, result, isOverride }: TargetEstimateS
         dijaga konsisten. Perubahan berat nyata bisa berbeda.
       </p>
     </div>
+  );
+}
+
+/**
+ * Teaser premium untuk estimasi waktu ke target. Ditampilkan ke pengguna free
+ * di posisi yang sama dengan estimasi asli, mengajak upgrade tanpa membocorkan
+ * angkanya.
+ */
+function TargetEstimateLocked() {
+  return (
+    <Link
+      href="/upgrade"
+      className="block rounded-2xl border border-amber-200 bg-amber-50 p-4 transition-colors hover:bg-amber-100"
+    >
+      <h3 className="flex items-center gap-2 font-semibold text-slate-950">
+        <Sparkles className="h-4 w-4 text-amber-600" />
+        Estimasi menuju target
+      </h3>
+      <p className="mt-2 text-sm leading-6 text-slate-600">
+        Perkiraan berapa lama mencapai berat target dari pola kalorimu adalah
+        fitur premium.{" "}
+        <span className="font-semibold text-amber-800">Lihat premium →</span>
+      </p>
+    </Link>
   );
 }
 

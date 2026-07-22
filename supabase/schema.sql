@@ -144,3 +144,24 @@ create trigger trg_enforce_free_save_limit
 before insert on public.bmi_histories
 for each row
 execute function public.enforce_free_save_limit();
+
+-- =====================================================================
+-- Fase 3: waitlist premium (belum ada pembayaran — hanya ukur minat).
+-- Siapa saja (anon + login) boleh mendaftar; email unik agar tidak dobel.
+-- Tidak ada policy SELECT → tabel tidak terbaca dari client (hanya
+-- service_role/dashboard yang bisa melihat daftar minat).
+-- =====================================================================
+create table if not exists public.waitlist (
+  id uuid primary key default gen_random_uuid(),
+  email text not null unique,
+  user_id uuid references auth.users (id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+alter table public.waitlist enable row level security;
+
+drop policy if exists "Anyone can join waitlist" on public.waitlist;
+create policy "Anyone can join waitlist"
+on public.waitlist
+for insert
+with check (true);
