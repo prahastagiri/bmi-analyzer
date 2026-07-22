@@ -180,21 +180,36 @@ proyeksi waktu ke target; kamu sendiri memakai aplikasi ini tiap minggu.
 Pisahkan tier lebih dulu, validasi minat, baru bangun pembayaran. Gerbang murah
 sebelum investasi mahal.
 
-- [ ] Definisikan tier di satu file konfigurasi:
-      **Free** = hitung unlimited, simpan 10 hasil terakhir, grafik 30 hari terakhir.
-      **Premium** = history & grafik unlimited, estimasi target, export JPG/PDF, (nanti) meal plan AI.
-- [ ] Tabel `entitlements` (atau kolom di `profiles`): `plan`, `valid_until`. Semua user
-      default `free`.
-- [ ] Enforcement di dua lapis: UI (tombol terkunci + ajakan upgrade) **dan** database
-      (RLS/trigger membatasi jumlah insert untuk free) — gating client-only mudah dilewati.
-- [ ] Halaman `/upgrade` dengan harga (mis. Rp 15rb/bulan) dan tombol **"Gabung waitlist"**
-      (simpan email ke tabel) — belum ada pembayaran.
+- [x] Definisikan tier di satu file konfigurasi (2026-07-22): `lib/tiers.ts` —
+      FREE_SAVE_LIMIT=10, FREE_CHART_DAYS=30, harga premium, daftar PREMIUM_FEATURES,
+      helper `isPremium`/`saveLimitFor` (+ 7 unit test). **Free** = hitung unlimited,
+      simpan 10 hasil, grafik 30 hari. **Premium** = history & grafik unlimited,
+      estimasi target, export JPG/PDF, (nanti) meal plan AI.
+- [x] Entitlement sebagai **kolom di `profiles`** (2026-07-22): `plan` (default 'free')
+      + `valid_until`. `lib/profile.ts` memuatnya. Plan hanya bisa diubah service_role
+      (bukan dari client). Semua user default free.
+- [x] Enforcement dua lapis (2026-07-22): **UI** — export terkunci + teaser estimasi
+      terkunci + banner upgrade (BmiActions/BmiResult/BmiTrendChart), grafik free 30 hari;
+      **DB** — trigger `enforce_free_save_limit` menolak insert bmi_histories ke-11 untuk
+      free (backstop tak bisa dilewati). Client menangkap error trigger jadi ajakan upgrade.
+- [x] Halaman `/upgrade` (2026-07-22): harga Rp 15rb/bulan, banding Free vs Premium,
+      tombol "Gabung waitlist" → `lib/waitlist.ts` simpan email ke tabel `waitlist`
+      (RLS insert publik, tanpa SELECT client). Belum ada pembayaran.
 - [ ] Ukur selama 2–4 minggu: pengunjung → register → simpan rutin → klik upgrade → isi waitlist.
 
 **Definition of Done:** funnel terukur end-to-end.
 **Gerbang ke Fase 4:** ada sinyal nyata (mis. puluhan pengguna aktif mingguan ATAU
 beberapa email waitlist). Jika tidak tercapai → perbaiki Fase 2/akuisisi dulu,
 jangan bangun pembayaran.
+
+> Status 2026-07-22: SEMUA KODE FASE 3 SELESAI (commit 9d1d805 + 59b3ac3),
+> tsc/29 tes/lint/build hijau, gating teruji di browser (user free: BMI tampil,
+> estimasi terkunci, banner upgrade, /upgrade render). **Belum di-push & belum
+> migrasi DB.** Prasyarat: (1) owner jalankan ulang `supabase/schema.sql`
+> (kolom plan/valid_until, trigger batas simpan, tabel waitlist), (2) push,
+> (3) uji e2e free vs premium (set 1 profil ke plan='premium' via dashboard utk
+> uji sisi premium), (4) mulai fase ukur 2-4 minggu. Premium diset MANUAL sampai
+> Fase 4 (pembayaran).
 
 ---
 
